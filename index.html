@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PP Flowers paymens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              // Primary Green: #76b041 mapping to Blue utility classes
+              blue: {
+                50: '#f1f8eb',
+                100: '#e0f0d4',
+                200: '#c3e2ab',
+                300: '#9ecc7d',
+                400: '#81bb6f',
+                500: '#76b041', // Main Primary
+                600: '#5d8f32',
+                700: '#487029',
+                800: '#3a5924',
+                900: '#314a21',
+                950: '#1a290f',
+              },
+              // Secondary Teal: #639A88 mapping to Indigo utility classes
+              indigo: {
+                50: '#f0f7f5',
+                100: '#ddeee9',
+                200: '#c0ded6',
+                300: '#95c6bb',
+                400: '#6ea89c',
+                500: '#639A88', // Main Secondary
+                600: '#4d7d6e',
+                700: '#41665b',
+                800: '#37544c',
+                900: '#304641',
+                950: '#1a2926',
+              },
+              // Custom Background
+              brand: {
+                 bg: '#E8E8E8'
+              },
+              slate: {
+                850: "#172033", 
+                950: "#020617",
+              }
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #E8E8E8; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #639A88; 
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #4d7d6e; 
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .material-symbols-outlined.filled {
+        font-variation-settings: 'FILL' 1;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "typeorm": "https://esm.sh/typeorm@^0.3.28",
+    "axios": "https://esm.sh/axios@^1.13.2",
+    "reflect-metadata": "https://esm.sh/reflect-metadata@^0.2.2",
+    "express": "https://esm.sh/express@^5.2.1",
+    "cors": "https://esm.sh/cors@^2.8.5",
+    "dotenv/": "https://esm.sh/dotenv@^17.2.3/"
+  }
+}
+</script>
+</head>
+  <body class="bg-[#E8E8E8] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased overflow-hidden">
+    <div id="root"></div>
+  </body>
+</html>
