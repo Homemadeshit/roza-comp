@@ -46,11 +46,62 @@ export class AccountViewService {
     });
   }
 
+  // --- OAuth Authorization Code Flow Support ---
+
   /**
-   * 1. Authentication
+   * Generates the URL to redirect the user to for logging in to AccountView.
+   */
+  public getAuthorizationUrl(): string {
+    const params = new URLSearchParams();
+    params.append('client_id', process.env.ACCOUNTVIEW_CLIENT_ID || '');
+    params.append('response_type', 'code');
+    // IMPORTANT: This URL must match exactly what is registered in the AccountView App settings
+    params.append('redirect_uri', 'http://localhost:3001/oauth/callback'); 
+    params.append('scope', 'financial_data'); // Adjust scope as needed
+    
+    // Note: The auth endpoint might differ slightly depending on version, usually /oauth/authorize
+    return `${this.baseUrl}/oauth/authorize?${params.toString()}`;
+  }
+
+  /**
+   * Exchanges the temporary authorization code for a persistent Access Token.
+   */
+  public async exchangeCodeForToken(code: string): Promise<any> {
+    const params = new URLSearchParams();
+    params.append('client_id', process.env.ACCOUNTVIEW_CLIENT_ID || '');
+    params.append('client_secret', process.env.ACCOUNTVIEW_CLIENT_SECRET || '');
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('redirect_uri', 'http://localhost:3001/oauth/callback');
+
+    console.log('🔄 Exchanging OAuth code for token...');
+
+    try {
+      const response = await axios.post(`${this.baseUrl}/api/v3/Token`, params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+
+      const accessToken = response.data.access_token;
+      
+      // Set the token for future requests in this instance
+      this.api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      console.log('✅ Token Exchange Successful');
+      return response.data;
+    } catch (error) {
+      console.error('❌ Token Exchange Failed:', error?.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * 1. Authentication (Client Credentials Fallback)
    * Uses OAuth2 /api/v3/Token endpoint as specified
    */
   private async authenticate(): Promise<void> {
+    // If we already have a token (e.g. from OAuth flow), skip this
+    if (this.api.defaults.headers.common['Authorization']) return;
+
     try {
       // Prepare the specific headers usually required by AV for identification if needed, 
       // otherwise standard OAuth params go in the body
@@ -74,7 +125,7 @@ export class AccountViewService {
         this.api.defaults.headers.common['X-Company-Id'] = process.env.ACCOUNTVIEW_COMPANY_ID;
       }
 
-      console.log('✅ Connected to AccountView API v3');
+      console.log('✅ Connected to AccountView API v3 (Client Credentials)');
     } catch (error) {
       console.error('❌ AV Auth Failed:', error?.response?.data || error.message);
       throw new Error('Authentication Failed');
