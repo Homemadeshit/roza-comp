@@ -12,9 +12,6 @@ export class Customer {
   @Column({ name: 'external_av_id', unique: true })
   accountViewId: string; // The ID used in AccountView (Finance)
 
-  @Column({ name: 'external_fp_id', unique: true, nullable: true })
-  freshPortalId: string; // The ID used in FreshPortal (Operations)
-
   // --- Contact Info ---
 
   @Column()
@@ -40,10 +37,7 @@ export class Customer {
   // --- Status Flags ---
 
   @Column({ default: false })
-  isBlockedLocally: boolean; // What our system thinks
-
-  @Column({ default: false })
-  isBlockedInFreshPortal: boolean; // Confirmation from FreshPortal API
+  isBlockedLocally: boolean; // Internal Finance Block
 
   @OneToMany(() => Invoice, (invoice) => invoice.customer)
   invoices: Invoice[];

@@ -68,7 +68,7 @@ const SystemSettings = () => {
             <div className="p-6 md:p-8 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div>
                     <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">Blocking Logic</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Configure when the system should automatically block a customer in FreshPortal.</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Configure when the system should automatically flag a customer as blocked.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -122,7 +122,7 @@ const SystemSettings = () => {
                          <input type="checkbox" defaultChecked className="mt-1 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-blue-600 focus:ring-offset-0 focus:ring-2 focus:ring-blue-500/20" />
                          <div>
                              <p className="text-sm font-semibold text-slate-900 dark:text-white">Auto-Unblock on Plan Activation</p>
-                             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Automatically lift FreshPortal block when a new payment plan is approved and active.</p>
+                             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Automatically remove internal finance block when a new payment plan is approved and active.</p>
                          </div>
                      </label>
                  </div>
@@ -190,7 +190,7 @@ Payment Link: {{payment_link}}`}
              <div className="p-6 md:p-8 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                  <div>
                     <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">System Integrations</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage connections to external financial and operational systems.</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage connections to external financial systems.</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -230,25 +230,6 @@ Payment Link: {{payment_link}}`}
                                     <span className="material-symbols-outlined text-[18px]">sync</span> Sync Now
                                   </>
                                 )}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* FreshPortal */}
-                     <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl">
-                        <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-lg">FP</div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 dark:text-white">FreshPortal</h3>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">Operational System • Blocking/Unblocking Actions</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                             <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-500/20">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connected
-                            </div>
-                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
-                                <span className="material-symbols-outlined">settings</span>
                             </button>
                         </div>
                     </div>

@@ -9,8 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors() as express.RequestHandler); // Allow React Frontend to access this API
-app.use(express.json());
+app.use(cors() as any); // Allow React Frontend to access this API
+app.use(express.json() as any);
 
 // Initialize Controllers
 const customerController = new CustomerController();

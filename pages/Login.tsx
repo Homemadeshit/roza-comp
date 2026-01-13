@@ -94,7 +94,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </form>
 
         <div className="mt-8 text-center">
-            <p className="text-xs text-slate-400">Protected by FreshPortal Secure Login</p>
+            <p className="text-xs text-slate-400">Protected by PP Flowers Secure Login</p>
         </div>
       </div>
     </div>
