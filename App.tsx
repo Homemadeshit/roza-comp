@@ -14,6 +14,7 @@ import DisputeDetail from './pages/DisputeDetail';
 import SystemSettings from './pages/SystemSettings';
 import { api } from './utils/api'; // Use centralized API
 import CollectionsDashboard from './pages/CollectionsDashboard';
+import Reports from './pages/Reports';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -40,6 +41,7 @@ const AppRoutes = () => {
       <Route path="/collections/customer/:id" element={<CustomerDetail />} />
       <Route path="/notifications/:id" element={<NotificationView />} />
       <Route path="/disputes/:id" element={<DisputeDetail />} />
+      <Route path="/reports" element={<Reports />} />
       <Route path="/settings" element={<SystemSettings />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
