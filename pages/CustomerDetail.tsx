@@ -37,7 +37,7 @@ const CustomerDetail = () => {
     }
 
     // Calculate some derived stats
-    const totalOverdue = customer.invoices.reduce((acc, inv) => acc + (inv.daysOverdue > 0 ? inv.openAmount : 0), 0);
+    const totalOverdue = (customer.invoices as any[]).reduce((acc, inv) => acc + (inv.daysOverdue > 0 ? inv.openAmount : 0), 0);
     const oldestInvoiceDate = customer.invoices.sort((a, b) => new Date(a.issueDate).getTime() - new Date(b.issueDate).getTime())[0]?.issueDate;
 
     // Mock "Reminder Block" (since we don't have it in the main mock user object yet, defaulting to false)
