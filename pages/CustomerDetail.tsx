@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
 import InvoiceDetailModal from '../components/InvoiceDetailModal';
+import NoteModal from '../components/NoteModal';
 
 const CustomerDetail = () => {
     const { id } = useParams();
@@ -14,11 +15,23 @@ const CustomerDetail = () => {
     const customer = MOCK_COLLECTIONS_DATA.find(c => c.id === id);
     const [currentCreditLimit, setCurrentCreditLimit] = React.useState(customer?.creditLimit || 0);
 
+    // Notes State
+    const [isNoteModalOpen, setIsNoteModalOpen] = React.useState(false);
+    const [customerNotes, setCustomerNotes] = React.useState(customer?.notes || '');
+
     const handleSaveCreditLimit = (newLimit: number) => {
         if (customer) {
             customer.creditLimit = newLimit; // Update mock ref
             setCurrentCreditLimit(newLimit);
             setIsEditingCredit(false);
+        }
+    };
+
+    const handleSaveNote = (newNote: string) => {
+        if (customer) {
+            customer.notes = newNote; // Update mock ref
+            setCustomerNotes(newNote); // Update local state
+            setIsNoteModalOpen(false);
         }
     };
 
@@ -80,9 +93,12 @@ const CustomerDetail = () => {
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm flex items-center">
+                    <button
+                        onClick={() => setIsNoteModalOpen(true)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm flex items-center"
+                    >
                         <span className="material-symbols-outlined text-sm mr-2">edit_note</span>
-                        Add Note
+                        {customerNotes ? 'Edit Note' : 'Add Note'}
                     </button>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center shadow-sm">
                         <span className="material-symbols-outlined text-sm mr-2">send</span>
@@ -141,6 +157,19 @@ const CustomerDetail = () => {
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Customer Since</p>
                     <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{oldestInvoiceDate || 'N/A'}</p>
                 </div>
+
+                {/* Notes Section */}
+                {customerNotes && (
+                    <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-xl p-6 shadow-sm flex gap-4">
+                        <div className="flex-shrink-0">
+                            <span className="material-symbols-outlined text-amber-500">sticky_note_2</span>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide mb-1">Internal Note</h3>
+                            <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{customerNotes}</p>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Invoices List */}
@@ -201,8 +230,17 @@ const CustomerDetail = () => {
                 invoiceNumber={selectedInvoice || ''}
             />
 
+            <NoteModal
+                isOpen={isNoteModalOpen}
+                onClose={() => setIsNoteModalOpen(false)}
+                customerName={customer.companyName}
+                initialNote={customerNotes}
+                onSave={handleSaveNote}
+            />
+
         </div>
     );
-};
+}
 
 export default CustomerDetail;
+
