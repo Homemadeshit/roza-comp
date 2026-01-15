@@ -1,0 +1,367 @@
+Aangifteberichten	TAM	TAX_MSG	 	 	 	Systeemtabel	false
+Aangifteprofielen	TAF	TAX_PROF	 	 	 	Systeemtabel	false
+Aanmaningen	RE1	REMINDER	OPENITEM	 	 	Administratietabel	false
+Abonnementen	SBS	SBS_HDR	 	 	SBS_LINE	Administratietabel	false
+Abonnementgroepen	SBG	SBS_GRP	 	 	 	Administratietabel	false
+Abonnementregels	SBSL	SBS_LINE	 	SBS_HDR	 	Administratietabel	false
+AccountView Server-locaties	BOSL	BOS_LOC	 	 	 	Systeemtabel	false
+AccountView Verkenner	TV1	SYS_TREE	 	 	 	Programmatabel	false
+AccountView.Net	ANET	CRS_ANET	 	 	 	Systeemtabel	false
+AccountView.Net-apps	AUSP	AUSR_APP	USR_APP	 	 	Systeemtabel	false
+AccountView.Net-apps	NAPP	AV_APP	 	 	 	Systeemtabel	false
+AccountView.Net-apps	GAPP	GRP_APP	 	 	 	Systeemtabel	false
+AccountView.Net-apps	UAPP	USR_APP	 	 	 	Systeemtabel	false
+Activakaart	FAL	FA_LINE	 	 	 	Administratietabel	false
+Activakaart meerdere jaren	FLH	HST_FAL	FA_LINE	 	 	Administratietabel	false
+Activiteiten	AC1	ACTION	 	 	 	Administratietabel	false
+Activiteiten vanuit bedrijven	CMAC	CRS_CMAC	ACTION	 	 	Administratietabel	false
+Activiteiten vanuit contactpersonen	PPAC	CRS_PPAC	ACTION	 	 	Administratietabel	false
+Activiteiten vanuit medewerkers	EMAC	CRS_EMAC	ACTION	 	 	Administratietabel	false
+Activiteiten vanuit projecten	PJAC	CRS_PJAC	ACTION	 	 	Administratietabel	false
+Activiteithoofdgebieden	AAM	ACT_MARE	 	 	ACT_SARE	Administratietabel	false
+Activiteitimportsjablonen	ACTM	ACT_TMPL	 	 	 	Administratietabel	false
+Activiteitprioriteiten	ACST	ACT_SUBS	 	 	 	Administratietabel	false
+Activiteitsubgebieden	AAS	ACT_SARE	 	ACT_MARE	 	Administratietabel	false
+Administratie kengetallen	L5KE	L5_KENGT	 	 	 	Administratietabel	true
+Administratie-instellingen	ADP	ADM_PRF	 	 	 	Administratietabel	false
+Administratie-instellingen BrancheView	L5AA	L5_ADMIN	 	 	 	Administratietabel	true
+Administratiemonitor	AMON	ADM_MON	 	 	 	Administratietabel	false
+Administratienummergroepen	NUM	ANR_GRP	 	 	 	Administratietabel	false
+Administraties	ADL	ADM_LIST	 	 	 	Systeemtabel	false
+Administraties per bedrijf	L5AL	L5_ADMLS	 	 	 	Administratietabel	true
+Administration analyser	L5AM	L5_ADMON	 	 	 	Systeemtabel	true
+Adressen	L5AD	L5_ADRES	 	 	 	Administratietabel	true
+Afdelingen	DPT	DEPT	 	 	 	Administratietabel	false
+Afdrukvoorbeeld	PVW1	CRS_PRVW	 	 	 	Administratietabel	false
+Afletteromschrijvingen	MT1	CHK_DESC	 	 	TRN_CHK	Administratietabel	false
+Afschrijvingsmethoden	FD1	DEP_HDR	 	 	DEP_LINE	Administratietabel	false
+Algemene uitdrukkingen	EXPN	CRS_EXPN	DCT_FLD	 	 	Programmatabel	false
+Annuleringsredenen	SC1	SBS_CANC	 	 	 	Administratietabel	false
+AP-.NET Assembly lijst	ASBL	AP_ASBL	 	 	 	Systeemtabel	true
+AP-Aanheffen	ADEA	ADEARS	 	 	 	Administratietabel	true
+AP-Activiteiten	IA1	ASC_ACT	 	 	 	Administratietabel	true
+AP-Activiteitindelingen	ASCV	ASC_VIEW	 	 	 	Administratietabel	true
+AP-Activiteitreeksen	ASAH	AP_ACTSH	 	 	 	Administratietabel	true
+AP-Activiteitreekskoppelingen	LKAS	AP_LNKAS	 	 	 	Administratietabel	true
+AP-Activiteitreeksregels	ASAL	AP_ACTSL	 	 	 	Administratietabel	true
+AP-Agenda	DIA1	DIARY	ASC_ACT	 	 	Administratietabel	true
+AP-Agenda-activiteiten	DIA4	DIA_ACT	 	 	 	Administratietabel	true
+AP-Agenda-synchronisatiesleutel	DIA5	SYNC_ACT	 	 	 	Administratietabel	true
+AP-Alchemy-databases	ALDB	ALCH_DB	 	 	 	Administratietabel	true
+AP-Alchemy-databasetypen	ALDT	ALCH_DBT	 	 	 	Administratietabel	true
+AP-Alchemy-documenten	ADOC	ALCH_DOC	 	 	 	Administratietabel	true
+AP-Alchemy-documenten	ADNF	CRS_ADNF	ALCH_DOC	 	 	Administratietabel	true
+AP-Alchemy-documentgroepen	ADGR	ALCH_DGR	 	 	 	Administratietabel	true
+AP-Alchemy-documenttypen	ADTP	ALCH_DTP	 	 	 	Administratietabel	true
+AP-Alchemy-mappen	AFLD	ALCH_FLD	 	 	 	Administratietabel	true
+AP-Archief activiteiten	IA1H	ASC_ACTH	ASC_ACT	 	 	Administratietabel	true
+AP-Archief e-mailberichten	AEML	ARCH_EML	 	 	 	Administratietabel	true
+AP-Artikel barcodes	AK1B	ART_BAR	 	 	 	Administratietabel	true
+AP-Attenties	IC1A	CONT_ATT	 	 	 	Administratietabel	true
+AP-Barcode-etiketten opmaak	BAEX	BAR_EXPN	 	 	 	Administratietabel	true
+AP-Barcodecollector-opdrachten	BCOH	BCOL_HDR	 	 	BCOL_LN	Administratietabel	true
+AP-Barcodecollector-regels	BCOL	BCOL_LN	 	BCOL_HDR	 	Administratietabel	true
+AP-Cliëntadministraties	ICM	ADM_LINE	 	 	 	Administratietabel	true
+AP-Contactpersonen	IP1	ASC_PP	PEOPLE	 	 	Administratietabel	true
+AP-CTI instellingen	CTI1	CTI_SET	 	 	 	Programmatabel	true
+AP-CTI telefoonnummers	CTI2	CTI_TELN	 	 	 	Programmatabel	true
+AP-CTI toestellen	CTID	CTI_DEV	 	 	 	Administratietabel	true
+AP-Documentkoppelingen	AULV	AUSR_LNK	USR_LINK	 	 	Administratietabel	true
+AP-Dymo-labels	DYML	DYMO_LBL	 	 	 	Administratietabel	true
+AP-Dymo-velden	DYMF	DYMO_FLD	 	 	 	Administratietabel	true
+AP-E-mail-uitsluitingen	AMLX	ADM_EMLX	 	 	 	Administratietabel	true
+AP-E-mail-uitsluitingen (systeem)	SMLX	SYS_EMLX	 	 	 	Systeemtabel	true
+AP-E-mailarchieven	EMFD	EMP_MFLD	 	 	 	Administratietabel	true
+AP-FTP-instellingen	FTPS	AP_FTPST	 	 	 	Systeemtabel	true
+AP-Functiehouders	ICR2	CRS_ICR2	CONTACT	 	 	Administratietabel	true
+AP-Gebruikerslijsten	APUL	AP_ULIST	 	 	AP_UVAL	Administratietabel	true
+AP-Gebruikerslijstwaarden	APU1	AP_UVAL	 	AP_ULIST	 	Administratietabel	true
+AP-Gebruikersveldomschrijvingen	_AFL	ASC_FLD	 	 	 	Administratietabel	true
+AP-Gekoppelde functiehouders	LKRE	AP_LNKRE	 	 	 	Administratietabel	true
+AP-Gekoppelde hoofdrelaties	LKHR	CRS_LKRE	AP_LNKRE	 	 	Administratietabel	true
+AP-Gekoppelde medewerkers	LKEM	AP_LNKEM	 	 	 	Administratietabel	true
+AP-Geo-coördinaten	GEO	AP_GEO	 	 	 	Administratietabel	true
+AP-Hoofdrelaties	ICR1	CRS_ICR1	CONTACT	 	 	Administratietabel	true
+AP-ImageView	AIVO	AIMGVIEW	 	 	 	Administratietabel	true
+AP-Jaarkalender	UDYC	AP_YRCAL	 	 	 	Administratietabel	true
+AP-Jaarrekening Formulieren	JRFS	JR_FORMS	JR_CNT	 	 	Administratietabel	true
+AP-Jaarrekening Groepen	JRG	JR_GRP	 	 	 	Administratietabel	true
+AP-Jaarrekening Rubrieken	JRL	JR_LEAD	 	 	JR_ACCT	Administratietabel	true
+AP-Jaarrekening Rubriekrekeningen	JRA	JR_ACCT	 	JR_LEAD	 	Administratietabel	true
+AP-Jaarrekening Symbolen	JRS	JR_SYMB	 	 	 	Administratietabel	true
+AP-Jaarrekening Toelichtingen	JRE	JR_HDRE	JR_HDR	 	 	Administratietabel	true
+AP-Jaarrekening Toelichtingsjablonen	JRQ	JR_QHDR	 	 	JR_QUEST	Administratietabel	true
+AP-Jaarrekening Weergavesymbolen	JRVS	JR_VS	JR_CNT	 	 	Administratietabel	true
+AP-Jaarrekening Word-sjablonen	JRWT	JR_WTMP	 	 	 	Systeemtabel	true
+AP-Jaarrekeningen	JR0	JR_HDR	 	 	JR_LINE	Administratietabel	true
+AP-Jaarrekeningregels	JR1	JR_LINE	 	JR_HDR	 	Administratietabel	true
+AP-Kolommenbalans	KB1	GL_YEAR	 	 	 	Administratietabel	true
+AP-Kolommenbalans-instellingen	KBST	KB1_SET	 	 	 	Administratietabel	true
+AP-Koppelingsrollen medewerkers	LKTE	AP_LNKTE	 	 	 	Administratietabel	true
+AP-Koppelingsrollen relaties	LKTR	AP_LNKTR	 	 	 	Administratietabel	true
+AP-Label-layouts	ALYB	ALAY_LBL	 	 	 	Systeemtabel	true
+AP-Locatiemarkers	LCMK	AP_LCMRK	 	 	 	Administratietabel	true
+AP-Medewerkers	VEM1	VIS_EM1	EMPLOYEE	 	 	Administratietabel	true
+AP-Medewerkers namens	EMPB	EMP_BEHF	 	 	 	Administratietabel	true
+AP-Medewerkerselecties	TELF	TEL_FILT	 	 	 	Administratietabel	true
+AP-Medewerkersgroepen	AEG1	EMGROUP	 	 	 	Administratietabel	true
+AP-Mobile rapporten	APMR	APM_RPTS	 	 	 	Systeemtabel	true
+AP-Niet-Werkdagen	ANWD	AP_NWDAY	 	 	 	Systeemtabel	true
+AP-Ontdubbelregels	PDBL	POST_DBL	 	 	 	Administratietabel	true
+AP-Outlook-contactpersonen	OLPP	OUTL_PP	 	 	 	Administratietabel	true
+AP-Periodecijfers	APCH	APER_CHT	 	 	 	Administratietabel	true
+AP-Planningregels	RLY	REPLY	 	 	 	Administratietabel	true
+AP-RDT Te doen's	RDT1	RDT_TEL1	 	 	 	Administratietabel	true
+AP-Relaties	IC1	CRS_IC1	CONTACT	 	 	Administratietabel	true
+AP-Samenvoegsets	MRG1	MRG_SET	 	 	 	Systeemtabel	true
+AP-Samenvoegsetvelden	MRG2	MRG_FLD	 	 	 	Systeemtabel	true
+AP-Selectietypen	IAAS	ASC_SARE	 	 	 	Administratietabel	true
+AP-Snelzoeken	SZK	SZK_HDR	 	 	SZK_LINE	Systeemtabel	true
+AP-Standaardbriefteksten	LSTX	LET_STXT	 	 	 	Administratietabel	true
+AP-Standaardbrieven	LTR1	LETTERS	 	 	 	Administratietabel	true
+AP-Synchronisatie-administratie	SMEC	SYS_MEXC	 	 	 	Systeemtabel	true
+AP-Synchronisatie-gebruikers	SMUS	SYS_MUSR	 	 	 	Systeemtabel	true
+AP-Synchronisatie-instellingen	SMST	SYS_MSET	 	 	 	Systeemtabel	true
+AP-Te doen's	TEL1	TEL_INFO	 	 	 	Administratietabel	true
+AP-Twitter-zoektermen	TWSC	TWT_SRC	 	 	 	Administratietabel	true
+AP-Urenmatrix	ATMX	ATIM_MTX	 	 	 	Administratietabel	true
+AP-Verkoop-/Inkoopinfo	AISH	ASC_ISH	 	 	 	Administratietabel	true
+AP-Verversen weergaven	AUSL	AUPD_SL	 	 	 	Administratietabel	true
+AP-VJP-bladzijden	KB3	AVJP_PAG	 	 	 	Administratietabel	true
+AP-VJP-regels	KB2	AVJP_LIN	 	 	 	Administratietabel	true
+AP-VPB-pakketten	VPB1	VPB_PKG	 	 	 	Programmatabel	true
+AP-VPB-rubrieken	VPB2	VPB_LEAD	 	VPB_PKG	 	Programmatabel	true
+AP-Vrije lijsten	VINP	I_INPLST	INP_LIST	 	 	Administratietabel	true
+AP-Weergave-knoppen	VWBT	FVW_BTN	 	 	 	Systeemtabel	true
+AP-ZPL Labelregels	ALBL	AZPL_FMT	 	 	 	Systeemtabel	true
+AP-ZPL Labels	AZPL	AZPL_LBL	 	 	 	Systeemtabel	true
+API Registry	REG	API_REG	 	 	 	Programmatabel	false
+Application Class Registry	VCL	VEND_CLS	 	 	 	Programmatabel	false
+Approval-goedkeurders	APRU	CRS_APRU	 	 	 	Administratietabel	false
+Artikelbladzijden	AH1	ART_HDR	 	 	ART_LINE	Administratietabel	false
+Artikelen	AK1	ARTICLE	 	 	 	Administratietabel	false
+Artikelgroepen	AG1	ART_GRP	 	 	AG_SPL	Administratietabel	false
+Artikelhistorie	AKH	CRS_AKH	ART_LINE	 	 	Administratietabel	false
+Artikelhistorie meerdere jaren	ALH	HST_AL	ART_LINE	HST_AH	 	Administratietabel	false
+Artikelhistoriebladzijden meerdere jaren	ALH2	HST_AH	ART_HDR	 	HST_AL	Administratietabel	false
+Artikelregels	AKC	ART_LINE	 	ART_HDR	 	Administratietabel	false
+Audit Trail (administratie)	TL2	ADM_LOG	 	 	 	Administratietabel	false
+Audit Trail (cliëntgegevens)	TL3	CLI_LOG	ADM_LOG	 	 	Administratietabel	false
+Audit Trail (systeem)	TL1	SYS_LOG	 	 	 	Programmatabel	false
+Autocodering	TB1	TB_SRC	 	 	TB_SPLIT	Administratietabel	false
+Autoherkenning	L5AC	L5_AUTOC	 	 	 	Administratietabel	true
+Autoherkenning (systeem)	L5A2	L5_AUTOS	 	 	 	Systeemtabel	true
+AutoInvoice	AI	CRS_AI	 	 	 	Administratietabel	false
+Automatische betalingen	PG1	OPEN_PG	OPENITEM	 	 	Administratietabel	false
+Automatische incasso	DD1	OPEN_DD	OPENITEM	 	 	Administratietabel	false
+Bank bronnen	L5BB	L5_BANKS	 	 	 	Systeemtabel	true
+Bank-/Kasdagboekbladzijden (import)	DJ2B	CRS_DJPB	DJ_PAGE	 	CRS_DJLB	Administratietabel	false
+Bankafschriften (BrancheView)	L5BM	L5_BANKH	 	 	L5_BANK	Administratietabel	true
+Banken	BN1	BANK	 	 	 	Administratietabel	false
+Banken en formaten	L5BA	L5_BANKE	 	 	 	Administratietabel	true
+Bankmutaties	TLB1	TBM_LINE	 	 	 	Administratietabel	false
+Bankrekeningnummers per administratie	ABNK	ADM_BANK	 	 	 	Systeemtabel	false
+Batchverwerking	DJP	CRS_DJP	DJ_PAGE	 	 	Administratietabel	false
+Bedrijffuncties bij projecten	LNPC	PROJ_CON	 	 	 	Administratietabel	false
+Bedrijven	CM1	CRS_REL	CONTACT	 	 	Administratietabel	false
+Bedrijven (basisgegevens) 2	APCT	AP_CONT	 	 	 	Administratietabel	true
+Bedrijven beschikbaar in Contact-app	CM1C	CRS_RELC	CONTACT	 	 	Administratietabel	false
+Bedrijven vanuit activiteiten	ACCM	CRS_ACCM	CONTACT	 	 	Administratietabel	false
+Bedrijven vanuit contactpersonen	PPCM	CRS_PPCM	CON_PP	 	 	Administratietabel	false
+Bedrijven vanuit medewerkers	EMCM	CRS_EMCM	CON_EMP	 	 	Administratietabel	false
+Bedrijven vanuit projecten	PJCM	CRS_PJCM	CONTACT	 	 	Administratietabel	false
+Bestandsimport	L5FI	L5_FLIMP	 	 	 	Administratietabel	true
+Betaal en incasso historie	L5PH	L5_PAYH	 	 	 	Administratietabel	true
+Betaalopdrachten	L5PY	L5_PAY1	L5_PAY	 	 	Administratietabel	true
+Betaalserviceprovider koppelen	PLNK	PAY_PROV	 	 	 	Systeemtabel	false
+Betalingscondities	PT1	PAY_COND	 	 	 	Administratietabel	false
+Bladwijzers	CONL	CON_LINK	 	 	 	Administratietabel	false
+Boekingsvoorstelkoppelingen	DJPM	DJIP_MAP	 	 	 	Administratietabel	false
+BrancheView App gebruiker export	L5UX	L5_APPUS	 	 	 	Systeemtabel	true
+BrancheView Documentviewer	L5DV	L5_DOCIM	 	 	 	Systeemtabel	true
+BrancheView Lijsten	L5LS	L5_LISTS	 	 	 	Systeemtabel	true
+BrancheView Lijstgegevens	L5LL	L5_LLIST	 	 	 	Administratietabel	true
+Brugstaat	GLT	CRS_GLT	TRANSACT	 	 	Administratietabel	false
+BTW-aangiften	VAT	VAT_HDR	 	 	VAT_LINE	Administratietabel	false
+BTW-aangifterubrieken	VAF	VAT_FORM	 	 	 	Administratietabel	false
+BTW-codes	VA1	VAT	 	 	 	Administratietabel	false
+Budgetregels	BS1	BUD_SCEN	 	 	BUD_PER	Administratietabel	false
+Budgetten	BSC	BUD_SCOD	 	 	 	Administratietabel	false
+Budgetten	L5YC	L5_YOBBD	BUD_SCOD	 	 	Administratietabel	true
+Budgetverdeelcodes	BD1	BUD_DCOD	 	 	BUD_DLIN	Administratietabel	false
+Certificaten	CERT	CERT_LST	 	 	 	Systeemtabel	false
+Cliënt-logins	CLOG	CLT_LOG	 	 	 	Administratietabel	false
+Cliëntadministraties	CADM	CLT_ADM	 	 	 	Administratietabel	false
+Cliëntberichten	CMSG	CLT_MSGS	 	 	 	Administratietabel	false
+Cliënten met directe bankkoppeling	ECT1	EBNK_CLT	 	 	EBNK_BNK	Systeemtabel	false
+Cliëntlicenties	LIC1	CLT_LIC	 	 	 	Administratietabel	false
+Cliëntwijzigingen	CLT1	CLT_CHG	 	 	 	Administratietabel	false
+Codeerbladzijden	L5CB	L5_CODHD	 	 	L5_CODLN	Administratietabel	true
+Codeerboeken	L5CT	L5_TYPE	 	 	 	Administratietabel	true
+Codeertransacties	L5C2	L5_CODT2	L5_CODTR	 	 	Administratietabel	true
+Codeertransacties (BASIS)	L5CR	L5_CODTR	 	 	 	Administratietabel	true
+Coderen factuurhistorie	L5CH	L5_CODHF	 	 	L5_CODLF	Administratietabel	true
+Coderen per regel	L5CL	L5_CODLI	L5_CODLN	 	 	Administratietabel	true
+Concept-boekingen	DJPB	DJPB_HDR	 	 	DJPB_LIN	Administratietabel	false
+Connector-componenten	STGY	DCT_STGY	 	 	 	Programmatabel	false
+Consolidatie	CN	ADM_CN	ADM_LIST	 	 	Systeemtabel	false
+Contacten (Samenwerking Aan)	L5W4	L5_SWUS2	 	 	 	Systeemtabel	true
+Contacten (Samenwerking Van)	L5W3	L5_SWUS1	 	 	 	Systeemtabel	true
+Contactper.func. bij bedrijven Cont app	LNCA	CON_PP_C	CON_PP	 	 	Administratietabel	false
+Contactpersonen	PP1	PEOPLE	 	 	 	Administratietabel	false
+Contactpersonen vanuit bedrijven	CMPP	CRS_CMPP	CON_PP	 	 	Administratietabel	false
+Contactpersoonfuncties bij bedrijven	LNCP	CON_PP	 	 	 	Administratietabel	false
+Controles cliëntadministratie	CLCK	CLT_CHCK	 	 	 	Systeemtabel	false
+Controles in administratie	ACCK	ACL_CHCK	 	 	 	Administratietabel	false
+Controlesets cliëntadministratie	CLCS	CLT_CHKS	 	 	 	Systeemtabel	false
+Controlesets in administratie	ACCS	ACL_CHKS	 	 	 	Administratietabel	false
+Correcties eAccounting	EA2	EA_CORR	 	 	 	Administratietabel	false
+Crediteuren	AP1	ACCT_PAY	CONTACT	 	 	Administratietabel	false
+Dagboekberichten	DJI	DJ_IMP	 	 	 	Administratietabel	false
+Dagboekberichten (systeem)	DJIS	DJ_IMPS	 	 	 	Systeemtabel	false
+Dagboekberichtkoppelingen	DJIM	DJI_MAPL	 	 	 	Administratietabel	false
+Dagboekbladzijden	DJ2	DJ_PAGE	 	 	DJ_LINE	Administratietabel	false
+Dagboekconversies	CNVD	CNV_DAIL	 	 	 	Administratietabel	false
+Dagboeken	DJ1	DAILY	 	 	 	Administratietabel	false
+Dashboard	DASH	DASH_ITM	 	 	 	Administratietabel	false
+Data Dictionary	DBF	DCT_FILE	 	 	 	Programmatabel	false
+Debiteur-/crediteurkaarten	AR2	AR_CARD	TRANSACT	 	 	Administratietabel	false
+Debiteur-/crediteurkaarten vorig jaar	AR2H	HST_ARC	PREV_GJL	 	 	Administratietabel	false
+Debiteuren	AR1	ACCT_REC	CONTACT	 	 	Administratietabel	false
+Debiteurkaarten	AR3	CM_CARD	TRANSACT	 	 	Administratietabel	false
+Declaratieannuleringsredenen	EXC	EXP_CANC	 	 	 	Administratietabel	false
+Declaratieformules	EXPF	EXP_FORM	 	 	 	Administratietabel	false
+Declaratiehistorie	EXPH	EXP_HIST	 	 	 	Administratietabel	false
+Declaratiehistorie meerdere jaren	EXHM	HST_EXP	EXP_HIST	 	 	Administratietabel	false
+Declaratievoorstellen	EXP	EXP_HDR	 	 	EXP_LINE	Administratietabel	false
+DNB-codes	NCB1	BNK_CODE	 	 	 	Administratietabel	false
+Document categorieen	L5YQ	L5_YODCA	 	 	 	Administratietabel	true
+Documenten	L5YD	L5_YODOC	 	 	L5_YODHI	Administratietabel	true
+Documenten Treeview	L5YT	L5_YODTV	 	 	 	Administratietabel	true
+Documentkoppelingen	USRL	USR_LINK	 	 	 	Administratietabel	false
+Documentkoppelingen (BrancheView)	L5UD	L5_USRLK	USR_LINK	 	 	Administratietabel	true
+DOS-layoutconversies	CVL	MAP_TKN	 	 	 	Programmatabel	false
+Drll around	DRL	CRS_DRL	 	 	 	Administratietabel	false
+E-mailactiviteitsjablonen	MACT	MAIL_ACT	 	 	 	Administratietabel	false
+E-mailadressen	EML	EMAIL	 	 	 	Administratietabel	false
+E-mailprofielen	MPRF	MAIL_PRF	 	 	 	Systeemtabel	false
+E-mailsjablonen	MTMP	MAIL_TMP	 	 	 	Systeemtabel	false
+eAccounting-rekeningtypen	LE2	LEAD_EA	 	 	 	Administratietabel	false
+Elvy zoeksleutels	ELVY	ELVYSEEK	 	 	 	Administratietabel	true
+Etiketten	LBL	LBL_DEF	 	 	 	Programmatabel	false
+Event Log	ERR	ERR_LOG	 	 	 	Programmatabel	false
+Externe XBRL-gegevens	XBEX	XBRL_EXT	 	 	 	Administratietabel	false
+Extra administratiedata	L5XD	L5_XADAT	 	 	 	Administratietabel	true
+Extra administratiegegevens	L5XA	L5_XAOBJ	 	 	 	Administratietabel	true
+Extra modules bestellen	ALIC	CRS_ALIC	 	 	 	Programmatabel	false
+Extra tabellen	L5XT	L5_XTBL	 	 	 	Systeemtabel	true
+Extra velden	L5XF	L5_XFLD	 	 	 	Systeemtabel	true
+Fiatteringsgroepen	L5FP	L5_FTPRF	 	 	L5_FTPDT	Administratietabel	true
+Fiatteringsregels Postregistratie	L5PC	L5_PIFRL	 	 	 	Administratietabel	true
+Field Mapper	MAP	MAP_HDR	 	 	MAP_LINE	Systeemtabel	false
+Gebruikers	UMU	SEC_USR	 	 	 	Systeemtabel	false
+Gebruikersactiviteiten	UA1	USR_ACT	 	 	 	Systeemtabel	false
+Gebruikersgroepen	UMG	SEC_GRP	 	 	 	Systeemtabel	false
+Gebruikerslijsten	UL1	USR_LIST	 	 	USR_VAL	Programmatabel	false
+Gebruikersvelden	UF1	CRS_UF1	DCT_FLD	 	 	Systeemtabel	false
+Gebruikersvoorkeuren	PRF	SYS_PRF	 	 	 	Programmatabel	false
+Gebruikerswaarden	UV1	USR_VAL	 	USR_LIST	 	Administratietabel	false
+Grootboek	GL1	LEDGER	 	 	 	Administratietabel	false
+Grootboekkaarten	GLC	GL_CARD	TRANSACT	 	 	Administratietabel	false
+Grootboekkaarten codeermutaties	L5CG	L5_CODGB	L5_CODTR	 	 	Administratietabel	true
+Grootboekkaarten vorig jaar	GCH	HST_GLC	PREV_GJL	 	 	Administratietabel	false
+IBAN/BIC	L5IR	L5_IBAN	 	 	 	Systeemtabel	true
+ICP-aangiften	ICL	ICL_HDR	 	 	ICL_LINE	Administratietabel	false
+Import	IMP1	IMP_1	 	 	 	Administratietabel	false
+Import-regels	IMP2	IMP_2	 	 	 	Administratietabel	false
+Import-tussenbestanden	IMPT	IMP_TEMP	 	 	 	Administratietabel	false
+Importdefinities	PKG	PKG_INFO	 	 	 	Systeemtabel	false
+Importformaten	L5IF	L5_IMPFM	 	 	 	Systeemtabel	true
+Importhistorie	L5IM	L5_IMPMS	 	 	 	Administratietabel	true
+Incasso opdrachten	L5PI	L5_PAY2	L5_PAY	 	 	Administratietabel	true
+Incassohistorie	L5IG	L5_INCHS	 	 	 	Administratietabel	true
+Incassomachtigingen	L5MA	L5_INCMN	 	 	 	Administratietabel	true
+Indexdictionary	TAG	DCT_TAG	 	 	 	Programmatabel	false
+Infoline	INFO	CRS_INFO	 	 	 	Programmatabel	false
+Ingelogde gebruikers	USR	USR_LOG	 	 	 	Programmatabel	false
+Inkoopdagboekbladzijden (import)	DJ2P	CRS_DJPP	DJ_PAGE	 	CRS_DJLP	Administratietabel	false
+Inkooporderregels	POL	CRS_POL	PO_LINE	 	 	Administratietabel	false
+Inventaris	L5YI	L5_YOBIN	 	 	 	Administratietabel	true
+Invoercontroles	COMD	COMB_DFS	 	 	 	Administratietabel	false
+Invoercontrolewaarden	ECOM	TIM_COMB	 	 	 	Administratietabel	false
+Invoersjablonen	TMPL	REC_TMPL	 	 	 	Administratietabel	false
+ISO-landcodes	IL1	ISO_CNT	 	 	 	Administratietabel	false
+ISO-valutacodes	ICUR	ISO_CUR	 	 	 	Administratietabel	false
+Journaal	GJ1	TRANSACT	 	TRN_HDR	 	Administratietabel	false
+Journaal vorig jaar	GJ2	PREV_GJL	TRANSACT	 	 	Administratietabel	false
+Journaalhistorie meerdere jaren	GJH	HST_GJL	TRANSACT	HST_GJH	 	Administratietabel	false
+Journaalpost codeermutaties	L5CJ	L5_CODJP	L5_CODTR	 	 	Administratietabel	true
+Journaalposten	GLP	CRS_GLP	TRANSACT	 	 	Administratietabel	false
+Kantoormedewerkers	L5YO	L5_YOBOE	 	 	 	Administratietabel	true
+Kengetallen per gebruiker	L5UK	L5_USRKG	 	 	 	Systeemtabel	true
+Kengetalvelden	L5KV	L5_KENTG	 	 	 	Systeemtabel	true
+Knoppenbalken	FTBR	FRM_TBR	 	 	FTBR_LN	Systeemtabel	false
+Kolomweergaven	GRD	FVW_GRID	 	 	 	Programmatabel	false
+Kopiedocumenten	CINV	CPY_INV	ART_HDR	 	 	Administratietabel	false
+Kostenplaatsen	CC1	COST	 	 	 	Administratietabel	false
+Kostenplaatsen	L5SC	L5_COST	 	 	 	Systeemtabel	true
+Kostenplaatsen per vaste waarde	L5FK	L5_FSVDK	 	 	 	Administratietabel	true
+Kostensoorten	PC1	PC_TYPE	 	 	 	Administratietabel	false
+Layoutontwerp	RF1	CRS_LAY	 	 	 	Administratietabel	false
+Leveranciers (CCA)	L5CA	L5_CCALV	CONTACT	 	 	Administratietabel	true
+Magazijnlocaties	L5WS	L5_WHSLC	WHS_LOC	 	 	Administratietabel	true
+Magazijnlocaties (Inkoop)	L5W1	L5_WHSLP	WHS_LOC	 	 	Administratietabel	true
+Magazijnlocaties (Verkoop)	L5W2	L5_WHSLS	WHS_LOC	 	 	Administratietabel	true
+Medewerkerfuncties bij bedrijven	LNCE	CON_EMP	 	 	 	Administratietabel	false
+Medewerkerfuncties bij projecten	LNPE	PROJ_EMP	 	 	 	Administratietabel	false
+Medewerkers	EM1	EMPLOYEE	 	 	 	Administratietabel	false
+Medewerkers (HRM)	L5EP	L5_EMP	 	 	 	Administratietabel	true
+Medewerkers relatiebeheer	EMP	CRS_EMP	EMPLOYEE	 	 	Administratietabel	false
+Medewerkers vanuit bedrijven	CMEM	CRS_CMEM	CON_EMP	 	 	Administratietabel	false
+Memoriaaldagboekbladzijden (import)	DJ2M	CRS_DJPM	DJ_PAGE	 	CRS_DJLM	Administratietabel	false
+Multicliënt-telebankbladzijden	MCTB	MCTB_HDR	 	 	MCTB_LNE	Systeemtabel	false
+Mutatieregels openstaande post	GLJ	CRS_GLJ	TRANSACT	 	 	Administratietabel	false
+Mutatiesignalen	TRG	TRN_TRG	 	 	 	Systeemtabel	false
+Navigatievenster	NAVP	NAVP_GRP	 	 	NAVP_SUB	Systeemtabel	false
+Niet-financiële gegevens	NFD	NFD_GRP	 	 	NFD_PER	Administratietabel	false
+Nieuwsgroepen per gebruiker	L5GU	L5_YOBGU	 	 	 	Administratietabel	true
+Notificaties huidige gebruiker	UTSK	CRS_TASK	 	 	 	Programmatabel	false
+Object trace events	AOT	CRS_AOT	 	 	 	Programmatabel	false
+Ondernemingen	CMP1	COMP_HDR	 	 	COMP_LN	Systeemtabel	false
+Telrubrieken	FSL2	CRS_FSL2	 	 	 	Administratietabel	false
+Toegangsbeveiligingrollen	ROLE	SEC_ROLE	 	 	 	Systeemtabel	false
+Transactiecodes Coderen	L5CS	L5_CTRCD	 	 	 	Administratietabel	true
+UBL Berichten	L5UB	L5_UBL	 	 	 	Systeemtabel	true
+Urencombinaties Mobile App	L5UI	L5_APPTL	 	 	 	Administratietabel	true
+Urenhistorie	EH1T	TIM_HIST	 	 	 	Administratietabel	false
+Urenhistorie meerdere jaren	EHH	HST_TL	TIM_HIST	 	 	Administratietabel	false
+Urenregistratieregels	PTA	TIM_APPR	TIM_LINE	 	 	Administratietabel	false
+Urenregistratieweken	EM2	TIM_HDR	 	 	TIM_LINE	Administratietabel	false
+Uursoorten	TT1	TIM_TYPE	 	 	 	Administratietabel	false
+Uursoortgroepen	TTG	TIM_TG	 	 	 	Administratietabel	false
+Uurstatistiekgroepen	TG1	TIM_GRP	 	 	 	Administratietabel	false
+Uurtarieven	TRT	TIM_RATE	 	 	 	Administratietabel	false
+Valutacodes	CU1	CUR_CODE	 	 	CUR_RATE	Administratietabel	false
+Vaste activa	FAH	FA_HDR	 	 	 	Administratietabel	false
+Vaste activagroepen	FAG	FA_GRP	 	 	 	Administratietabel	false
+Vastewaarden	L5FV	L5_FSVAL	 	 	L5_FSVDT	Administratietabel	true
+Veelgestelde vragen	FAQ	FAQ	 	 	 	Systeemtabel	true
+Veldendictionary	FLD	DCT_FLD	 	 	 	Programmatabel	false
+Veldendictionary	L5DD	L5_DCTFD	DCT_FLD	 	 	Programmatabel	true
+Veldhistorie	FLDL	FLD_LOG	 	 	 	Programmatabel	false
+Verdeelsleutels	DC1	DST_CODE	 	 	DST_LINE	Administratietabel	false
+Verkoopdagboekbladzijden (import)	DJ2S	CRS_DJPS	DJ_PAGE	 	CRS_DJLS	Administratietabel	false
+Verkoopfacturen	SI1	SOI_HDR	 	 	SOI_LINE	Administratietabel	false
+Verkoopfactuurregels	SOIL	CRS_SOIL	SOI_LINE	 	 	Administratietabel	true
+Verslagformules	L5FF	L5_FSFRM	 	 	 	Administratietabel	true
+Verslaggrafieken	L5FG	L5_FSGRP	 	 	L5_FSGRL	Administratietabel	true
+Verslaglegging	WP2	CRS_TRLB	 	 	 	Administratietabel	false
+Verslagmodellen	FS1	FS_HDR	 	 	FS_LINE	Administratietabel	false
+Verwerkte leveringen	SH1	CRS_SOH	HST_AH	 	 	Administratietabel	false
+Invoerdatum	INP_DATE	8	Date/Time	false
+Invoermedewerker	INP_USR	20	String	false
+Medewerker laatste wijziging	CNG_USR	20	String	false
+Omschrijving sjabloon	TMP_DESC	40	String	true
+Sjablooncode	TMP_CODE	10	String	true
+Wijzigingsdatum	CNG_DATE	8	Date/Time	false
+Wijzignummer	CNG_NR	4	Integer	false

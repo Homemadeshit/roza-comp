@@ -55,14 +55,16 @@ const MOCK_CUSTOMERS = [
 ];
 
 const MOCK_INVOICES = [
-    { id: '101', invoiceNumber: 'INV-2023-001', amount: 12450.00, paidAmount: 0, issueDate: '2023-10-12', dueDate: '2023-11-12', status: 'OVERDUE' },
-    { id: '102', invoiceNumber: 'INV-2023-045', amount: 3200.00, paidAmount: 0, issueDate: '2023-10-20', dueDate: '2023-11-20', status: 'OVERDUE' },
-    { id: '103', invoiceNumber: 'INV-2023-099', amount: 5600.00, paidAmount: 5600.00, issueDate: '2023-09-01', dueDate: '2023-10-01', status: 'PAID' },
-    { id: '104', invoiceNumber: 'INV-2023-102', amount: 450.00, paidAmount: 0, issueDate: '2023-11-01', dueDate: '2023-12-01', status: 'OPEN' },
+  { id: '101', invoiceNumber: 'INV-2023-001', amount: 12450.00, paidAmount: 0, issueDate: '2023-10-12', dueDate: '2023-11-12', status: 'OVERDUE' },
+  { id: '102', invoiceNumber: 'INV-2023-045', amount: 3200.00, paidAmount: 0, issueDate: '2023-10-20', dueDate: '2023-11-20', status: 'OVERDUE' },
+  { id: '103', invoiceNumber: 'INV-2023-099', amount: 5600.00, paidAmount: 5600.00, issueDate: '2023-09-01', dueDate: '2023-10-01', status: 'PAID' },
+  { id: '104', invoiceNumber: 'INV-2023-102', amount: 450.00, paidAmount: 0, issueDate: '2023-11-01', dueDate: '2023-12-01', status: 'OPEN' },
 ];
 
 // Create a centralized Axios instance
-const API_URL = 'http://localhost:3001/api';
+const API_URL = '/api'; // Use relative path so it works through ngrok (proxy) or redirects to localhost:3001 if needed but mainly we want it to fail gracefully or hit the same domain.
+// Actually, since backend runs on 3001 and frontend on 3000, relative path '/api' will hit frontend:3000/api.
+// Vite proxy needs to be set up to forward /api to 3001.
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -78,50 +80,50 @@ api.interceptors.response.use(
     // Check if it's a network error (server down or unreachable)
     if (!error.response) {
       console.warn('⚠️ Backend unreachable (Network Error). Switching to Offline Mock Mode.');
-      
+
       const url = error.config.url;
 
       // 1. Mock Login
       if (url?.includes('/login')) {
-         return new Promise((resolve) => {
-             setTimeout(() => {
-                 resolve({ 
-                     data: { 
-                         success: true, 
-                         token: 'mock-offline-token', 
-                         user: { name: 'Demo Admin', email: 'admin@demo.local' } 
-                     } 
-                 });
-             }, 800); // Simulate network latency
-         });
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              data: {
+                success: true,
+                token: 'mock-offline-token',
+                user: { name: 'Demo Admin', email: 'admin@demo.local' }
+              }
+            });
+          }, 800); // Simulate network latency
+        });
       }
 
       // 2. Mock Customer List
       if (url?.endsWith('/customers')) {
-          return Promise.resolve({ data: MOCK_CUSTOMERS });
+        return Promise.resolve({ data: MOCK_CUSTOMERS });
       }
 
       // 3. Mock Customer Detail (regex for /customers/:id)
       if (url?.match(/\/customers\/[^/]+$/)) {
-          // Try to find by ID, otherwise return the first one as fallback
-          const id = url.split('/').pop();
-          const mockCustomer = MOCK_CUSTOMERS.find(c => c.id === id) || MOCK_CUSTOMERS[0];
-          
-          return Promise.resolve({ 
-              data: { 
-                  ...mockCustomer, 
-                  invoices: MOCK_INVOICES 
-              } 
-          });
+        // Try to find by ID, otherwise return the first one as fallback
+        const id = url.split('/').pop();
+        const mockCustomer = MOCK_CUSTOMERS.find(c => c.id === id) || MOCK_CUSTOMERS[0];
+
+        return Promise.resolve({
+          data: {
+            ...mockCustomer,
+            invoices: MOCK_INVOICES
+          }
+        });
       }
 
       // 4. Mock Sync Operation
       if (url?.includes('/sync')) {
-          return new Promise((resolve) => {
-              setTimeout(() => {
-                   resolve({ data: { message: 'Mock Sync Successful' } });
-              }, 2000);
-          });
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ data: { message: 'Mock Sync Successful' } });
+          }, 2000);
+        });
       }
     }
 

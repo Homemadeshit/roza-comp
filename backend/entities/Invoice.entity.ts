@@ -12,7 +12,7 @@ export class Invoice {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   invoiceNumber: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
@@ -21,6 +21,15 @@ export class Invoice {
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
   paidAmount: number;
 
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  openAmount: number; // ITEM_PAID (Remaining)
+
+  @Column({ type: 'varchar', nullable: true })
+  description: string; // TRN_DESC
+
+  @Column({ type: 'integer', default: 0 })
+  daysOverdue: number; // ITEM_EXPDS
+
   @Column({ type: 'date' })
   issueDate: Date;
 
@@ -28,13 +37,13 @@ export class Invoice {
   dueDate: Date;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: InvoiceStatus,
     default: InvoiceStatus.OPEN
   })
   status: InvoiceStatus;
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   isDisputed: boolean; // If true, this invoice might be excluded from blocking logic
 
   @ManyToOne(() => Customer, (customer) => customer.invoices)

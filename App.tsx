@@ -8,10 +8,12 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CustomerList from './pages/CustomerList';
 import CustomerDetail from './pages/CustomerDetail';
+
 import NotificationView from './pages/NotificationView';
 import DisputeDetail from './pages/DisputeDetail';
 import SystemSettings from './pages/SystemSettings';
 import { api } from './utils/api'; // Use centralized API
+import CollectionsDashboard from './pages/CollectionsDashboard';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -32,8 +34,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/collections" element={<CollectionsDashboard />} />
       <Route path="/customers" element={<CustomerList />} />
       <Route path="/customers/:id" element={<CustomerDetail />} />
+      <Route path="/collections/customer/:id" element={<CustomerDetail />} />
       <Route path="/notifications/:id" element={<NotificationView />} />
       <Route path="/disputes/:id" element={<DisputeDetail />} />
       <Route path="/settings" element={<SystemSettings />} />
@@ -50,7 +54,7 @@ export default function App() {
     try {
       // Call the API (Real or Mock via interceptor)
       const response = await api.post('/login', { email, password: pass });
-      
+
       if (response.data.success) {
         setIsLoading(true);
         // Simulate loading heavy app data
@@ -63,9 +67,9 @@ export default function App() {
       return { success: false, error: 'Unexpected response from server' };
     } catch (error: any) {
       console.error("Login Error", error);
-      
+
       let errorMessage = 'Login failed. Please try again.';
-      
+
       if (error.response) {
         // Server responded with an error (e.g. 401 Invalid Credentials)
         errorMessage = error.response.data.error || `Server Error: ${error.response.status}`;

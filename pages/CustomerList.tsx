@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../utils/api'; // Use centralized API
+// import { api } from '../utils/api'; // Use centralized API
+import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
 
 interface Customer {
     id: string;
@@ -47,44 +48,40 @@ const CustomerList = () => {
 
     useEffect(() => {
         const fetchCustomers = async () => {
-            try {
-                // Use the centralized API client
-                const response = await api.get('/customers');
-                
-                // Transform backend entity to frontend display model
-                const mappedData: Customer[] = response.data.map((c: any) => {
-                    // Logic to determine display status
-                    let status: Customer['status'] = 'Current';
-                    if (c.currentBalance > c.creditLimit) status = 'Overdue';
-                    else if (c.isBlockedLocally) status = 'Disputed';
-                    else if (c.currentBalance > (c.creditLimit * 0.9)) status = 'At Risk';
+            // --- DEMO MODE: Use MOCK_COLLECTIONS_DATA for consistency ---
+            const mappedData: Customer[] = MOCK_COLLECTIONS_DATA.map((c: any) => {
+                let status: Customer['status'] = 'Current';
+                // Map mock risk/balance to status
+                const hasOverdue = c.invoices.some((i: any) => i.daysOverdue > 0);
 
-                    return {
-                        id: c.id,
-                        companyName: c.companyName,
-                        accountViewId: c.accountViewId || 'N/A',
-                        email: c.email,
-                        creditLimit: c.creditLimit,
-                        currentBalance: c.currentBalance,
-                        status: status,
-                        initials: c.companyName.substring(0, 2).toUpperCase()
-                    };
-                });
+                if (hasOverdue) status = 'Overdue';
+                else if (c.risk === 'HIGH') status = 'At Risk';
+                else if (!c.directDebit && c.currentBalance > 0) status = 'Disputed'; // Proxy for "Manual Action Needed"
 
-                setCustomers(mappedData);
-            } catch (error) {
-                console.error("Failed to fetch customers", error);
-            } finally {
-                setLoading(false);
-            }
+                return {
+                    id: c.id,
+                    companyName: c.companyName,
+                    accountViewId: c.accountViewId,
+                    email: c.email,
+                    creditLimit: c.creditLimit,
+                    currentBalance: c.currentBalance,
+                    maxPaymentDays: c.maxPaymentDays,
+                    isBlockedLocally: false, // Default
+                    status: status,
+                    initials: c.companyName.substring(0, 2).toUpperCase()
+                };
+            });
+
+            setCustomers(mappedData);
+            setLoading(false);
         };
 
         fetchCustomers();
     }, []);
 
     // Filter logic
-    const filteredCustomers = customers.filter(c => 
-        c.companyName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const filteredCustomers = customers.filter(c =>
+        c.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.accountViewId.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -120,12 +117,12 @@ const CustomerList = () => {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span className="material-symbols-outlined text-slate-400 text-[20px] group-focus-within:text-blue-500 transition-colors">search</span>
                     </div>
-                    <input 
+                    <input
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm h-10 shadow-sm transition-all" 
-                        placeholder="Search by name, ID, or invoice..." 
-                        type="text" 
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm h-10 shadow-sm transition-all"
+                        placeholder="Search by name, ID, or invoice..."
+                        type="text"
                     />
                 </div>
                 <div className="flex gap-2 flex-wrap items-center">
@@ -134,10 +131,10 @@ const CustomerList = () => {
                         <span className="text-white dark:text-slate-900 text-xs font-medium">All</span>
                     </button>
                     {['Overdue', 'At Risk', 'Disputed'].map(status => (
-                         <button key={status} className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 px-3 transition-colors">
+                        <button key={status} className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 px-3 transition-colors">
                             <span className={`h-1.5 w-1.5 rounded-full ${status === 'Overdue' ? 'bg-red-500' : status === 'At Risk' ? 'bg-amber-500' : 'bg-blue-500'}`}></span>
                             <span className="text-slate-600 dark:text-slate-300 text-xs font-medium">{status}</span>
-                         </button>
+                        </button>
                     ))}
                 </div>
             </div>
@@ -170,8 +167,8 @@ const CustomerList = () => {
                                     <td colSpan={5} className="py-8 text-center text-slate-500">No customers found. Try syncing in Settings.</td>
                                 </tr>
                             ) : filteredCustomers.map((customer) => (
-                                <tr 
-                                    key={customer.id} 
+                                <tr
+                                    key={customer.id}
                                     onClick={() => navigate(`/customers/${customer.id}`)}
                                     className={`group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer ${customer.status === 'Overdue' ? 'bg-red-50/30 dark:bg-red-900/20' : ''}`}
                                 >
@@ -205,8 +202,8 @@ const CustomerList = () => {
                         </tbody>
                     </table>
                 </div>
-                 {/* Pagination */}
-                 <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                {/* Pagination */}
+                <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                     <p className="text-xs text-slate-500 dark:text-slate-400">Showing <span className="font-medium text-slate-700 dark:text-slate-200">{filteredCustomers.length}</span> results</p>
                     <div className="flex items-center gap-2">
                         <button disabled className="px-3 py-1.5 text-xs font-medium rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 cursor-not-allowed">Previous</button>

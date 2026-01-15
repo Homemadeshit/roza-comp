@@ -12,7 +12,8 @@ const AV_FIELDS = {
     NAME: 'NAAM',          // Company Name
     EMAIL: 'E_MAIL',       // Email Address
     LIMIT: 'KREDIETLIM',   // Credit Limit
-    PAY_DAYS: 'BET_TERM'   // Payment Term (Days)
+    PAY_DAYS: 'BET_TERM',   // Payment Term (Days)
+    AUTO_CONFIRM: 'DD_ACT' // Direct Debit / Auto Collect Status
   },
   OPEN_ITEM: {
     OBJ: 'OPI', // Openstaande Posten (Open Items)
@@ -20,8 +21,11 @@ const AV_FIELDS = {
     INV_NUM: 'FACTUURNR',  // Invoice Number
     AMOUNT: 'BEDRAG_VV',   // Original Amount (Foreign Currency usually, or BEDRAG for Base)
     PAID: 'BETAALD_VV',    // Paid Amount
+    REMAINING: 'ITEM_PAID', // Remaining Open Amount (User identified this)
     DATE: 'DATUM',         // Issue Date
-    DUE_DATE: 'VERVALDAT'  // Due Date
+    DUE_DATE: 'VERVALDAT',  // Due Date
+    DESCRIPTION: 'TRN_DESC', // Invoice Description
+    OVERDUE_DAYS: 'ITEM_EXPDS' // Days Overdue calculation from AV
   }
 };
 
@@ -31,10 +35,15 @@ export class AccountViewService {
   private invoiceRepo: Repository<Invoice>;
   private baseUrl: string;
 
+  // Static token storage for simple persistence in this demo
+  private static accessToken: string | null = null;
+  private static expiration: Date | null = null;
+
   constructor(dataSource: DataSource) {
     this.customerRepo = dataSource.getRepository(Customer);
     this.invoiceRepo = dataSource.getRepository(Invoice);
-    this.baseUrl = process.env.ACCOUNTVIEW_API_URL || 'https://api.accountview.net';
+    // Hardcoding temporarily to ensure we are hitting the new domain
+    this.baseUrl = 'https://accountview.net';
 
     this.api = axios.create({
       baseURL: this.baseUrl,
@@ -44,6 +53,11 @@ export class AccountViewService {
         'Accept': 'application/json'
       },
     });
+
+    // Apply token if we have one stored
+    if (AccountViewService.accessToken) {
+      this.api.defaults.headers.common['Authorization'] = `Bearer ${AccountViewService.accessToken}`;
+    }
   }
 
   // --- OAuth Authorization Code Flow Support ---
@@ -56,9 +70,10 @@ export class AccountViewService {
     params.append('client_id', process.env.ACCOUNTVIEW_CLIENT_ID || '');
     params.append('response_type', 'code');
     // IMPORTANT: This URL must match exactly what is registered in the AccountView App settings
-    params.append('redirect_uri', 'http://localhost:3001/oauth/callback'); 
-    params.append('scope', 'financial_data'); // Adjust scope as needed
-    
+    const redirectUri = process.env.ACCOUNTVIEW_REDIRECT_URI || 'http://localhost:3001/oauth/callback';
+    params.append('redirect_uri', redirectUri);
+    params.append('scope', process.env.ACCOUNTVIEW_SCOPE || 'financial_data'); // Adjust scope as needed
+
     // Note: The auth endpoint might differ slightly depending on version, usually /oauth/authorize
     return `${this.baseUrl}/oauth/authorize?${params.toString()}`;
   }
@@ -72,9 +87,11 @@ export class AccountViewService {
     params.append('client_secret', process.env.ACCOUNTVIEW_CLIENT_SECRET || '');
     params.append('grant_type', 'authorization_code');
     params.append('code', code);
-    params.append('redirect_uri', 'http://localhost:3001/oauth/callback');
+    // IMPORTANT: This must match the redirect_uri used in getAuthorizationUrl
+    const redirectUri = process.env.ACCOUNTVIEW_REDIRECT_URI || 'http://localhost:3001/oauth/callback';
+    params.append('redirect_uri', redirectUri);
 
-    console.log('🔄 Exchanging OAuth code for token...');
+    console.log('🔄 Exchanging OAuth code for token... (Real Mode)');
 
     try {
       const response = await axios.post(`${this.baseUrl}/api/v3/Token`, params, {
@@ -82,14 +99,16 @@ export class AccountViewService {
       });
 
       const accessToken = response.data.access_token;
-      
-      // Set the token for future requests in this instance
+
+      // Set the token for future requests in this instance AND static storage
+      AccountViewService.accessToken = accessToken;
       this.api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
+
       console.log('✅ Token Exchange Successful');
       return response.data;
     } catch (error) {
       console.error('❌ Token Exchange Failed:', error?.response?.data || error.message);
+      // Re-throwing so the caller knows it failed
       throw error;
     }
   }
@@ -119,7 +138,7 @@ export class AccountViewService {
       });
 
       this.api.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
-      
+
       // Some AV setups require X-Company-Id header for every request
       if (process.env.ACCOUNTVIEW_COMPANY_ID) {
         this.api.defaults.headers.common['X-Company-Id'] = process.env.ACCOUNTVIEW_COMPANY_ID;
@@ -146,7 +165,7 @@ export class AccountViewService {
           PageSize: 1000 // Fetch in batches
         }
       });
-      
+
       // AccountView returns rows in a generic structure, often inside `data` or direct array
       // Adjust based on exact JSON response structure. Usually: response.data.Rows or response.data
       return Array.isArray(response.data) ? response.data : (response.data.Rows || []);
@@ -157,17 +176,40 @@ export class AccountViewService {
   }
 
   /**
+   * Generic method to call api/v3/av/AccountViewBusinessObjects
+   * Requested by user based on documentation.
+   */
+  public async getBusinessObjects(businessObject: string, bookDate?: string): Promise<any> {
+    await this.authenticate();
+
+    try {
+      console.log(`🔍 Querying AccountViewData for ${businessObject}...`);
+      const response = await this.api.get('/api/v3/AccountViewData', {
+        params: {
+          BusinessObject: businessObject,
+          PageSize: 5
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`❌ getBusinessObjects failed:`, error?.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  /**
    * 2. Sync Customers (BusinessObject: DEB)
    */
   public async syncCustomers(): Promise<void> {
     await this.authenticate();
 
     const fields = [
-      AV_FIELDS.DEBTOR.ID, 
-      AV_FIELDS.DEBTOR.NAME, 
-      AV_FIELDS.DEBTOR.EMAIL, 
+      AV_FIELDS.DEBTOR.ID,
+      AV_FIELDS.DEBTOR.NAME,
+      AV_FIELDS.DEBTOR.EMAIL,
       AV_FIELDS.DEBTOR.LIMIT,
-      AV_FIELDS.DEBTOR.PAY_DAYS
+      AV_FIELDS.DEBTOR.PAY_DAYS,
+      AV_FIELDS.DEBTOR.AUTO_CONFIRM
     ];
 
     console.log(`fetching customers via object ${AV_FIELDS.DEBTOR.OBJ}...`);
@@ -192,9 +234,13 @@ export class AccountViewService {
       // Only update limit if it comes from AV (parse potential string to float)
       const limit = parseFloat(row[AV_FIELDS.DEBTOR.LIMIT]);
       if (!isNaN(limit)) customer.creditLimit = limit;
-      
+
       const days = parseInt(row[AV_FIELDS.DEBTOR.PAY_DAYS]);
       if (!isNaN(days)) customer.maxPaymentDays = days;
+
+      // Map Direct Debit (boolean or truthy check)
+      // Assuming DD_ACT returns true/false or 1/0
+      customer.directDebit = !!row[AV_FIELDS.DEBTOR.AUTO_CONFIRM];
 
       await this.customerRepo.save(customer);
     }
@@ -206,7 +252,7 @@ export class AccountViewService {
    */
   public async syncInvoices(): Promise<void> {
     if (!this.api.defaults.headers.common['Authorization']) {
-        await this.authenticate();
+      await this.authenticate();
     }
 
     const fields = [
@@ -214,8 +260,11 @@ export class AccountViewService {
       AV_FIELDS.OPEN_ITEM.INV_NUM,
       AV_FIELDS.OPEN_ITEM.AMOUNT,
       AV_FIELDS.OPEN_ITEM.PAID,
+      AV_FIELDS.OPEN_ITEM.REMAINING,
       AV_FIELDS.OPEN_ITEM.DATE,
-      AV_FIELDS.OPEN_ITEM.DUE_DATE
+      AV_FIELDS.OPEN_ITEM.DUE_DATE,
+      AV_FIELDS.OPEN_ITEM.DESCRIPTION,
+      AV_FIELDS.OPEN_ITEM.OVERDUE_DAYS
     ];
 
     console.log(`fetching invoices via object ${AV_FIELDS.OPEN_ITEM.OBJ}...`);
@@ -242,23 +291,26 @@ export class AccountViewService {
         invoice.customer = customer;
       }
 
-      // Parse amounts (AV might return European format "1.000,00" or standard float. Assuming standard here)
+      // Parse amounts
       invoice.amount = parseFloat(row[AV_FIELDS.OPEN_ITEM.AMOUNT]) || 0;
       invoice.paidAmount = parseFloat(row[AV_FIELDS.OPEN_ITEM.PAID]) || 0;
-      
-      // Parse Dates (AV usually returns YYYYMMDD or ISO)
-      // If AV returns YYYYMMDD string, conversion is needed. Assuming ISO or standard date string for now.
+      invoice.openAmount = parseFloat(row[AV_FIELDS.OPEN_ITEM.REMAINING]) || (invoice.amount - invoice.paidAmount); // Fallback if 0
+
+      // Details
+      invoice.description = row[AV_FIELDS.OPEN_ITEM.DESCRIPTION] || '';
+      invoice.daysOverdue = parseInt(row[AV_FIELDS.OPEN_ITEM.OVERDUE_DAYS]) || 0;
+
+      // Parse Dates
       invoice.issueDate = new Date(row[AV_FIELDS.OPEN_ITEM.DATE]);
       invoice.dueDate = new Date(row[AV_FIELDS.OPEN_ITEM.DUE_DATE]);
 
-      // Calculate Status
-      const today = new Date();
-      if ((invoice.amount - invoice.paidAmount) <= 0.01) {
-         invoice.status = InvoiceStatus.PAID;
-      } else if (invoice.dueDate < today) {
-         invoice.status = InvoiceStatus.OVERDUE;
+      // Calculate Status based on User Logic: ITEM_EXPDS > 0 -> overdue
+      if (invoice.daysOverdue > 0) {
+        invoice.status = InvoiceStatus.OVERDUE;
+      } else if (invoice.openAmount <= 0.01) {
+        invoice.status = InvoiceStatus.PAID;
       } else {
-         invoice.status = InvoiceStatus.OPEN;
+        invoice.status = InvoiceStatus.OPEN;
       }
 
       await this.invoiceRepo.save(invoice);

@@ -26,13 +26,13 @@ export class PaymentPlan {
   nextCheckDate: Date; // When the system should check if the payment arrived
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: PlanStatus,
     default: PlanStatus.ACTIVE
   })
   status: PlanStatus;
 
-  @Column({ default: true })
+  @Column({ type: 'boolean', default: true })
   allowOrdering: boolean; // If true, we tell FreshPortal to UNBLOCK even if balance is high
 
   @ManyToOne(() => Customer, (customer) => customer.paymentPlans)

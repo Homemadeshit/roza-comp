@@ -8,19 +8,19 @@ export class Customer {
   id: string;
 
   // --- External Integrations ---
-  
-  @Column({ name: 'external_av_id', unique: true })
+
+  @Column({ type: 'varchar', name: 'external_av_id', unique: true })
   accountViewId: string; // The ID used in AccountView (Finance)
 
   // --- Contact Info ---
 
-  @Column()
+  @Column({ type: 'varchar' })
   companyName: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   email: string; // For sending Weekly Statements
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   whatsappPhone: string; // For WhatsApp Integration
 
   // --- Financial Rules ---
@@ -28,15 +28,18 @@ export class Customer {
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
   creditLimit: number;
 
-  @Column({ default: 30 })
+  @Column({ type: 'integer', default: 30 })
   maxPaymentDays: number; // e.g., Net 30
+
+  @Column({ type: 'boolean', default: false })
+  directDebit: boolean; // Derived from DD_ACT
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
   currentBalance: number; // Synced from AccountView
 
   // --- Status Flags ---
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   isBlockedLocally: boolean; // Internal Finance Block
 
   @OneToMany(() => Invoice, (invoice) => invoice.customer)

@@ -4,14 +4,16 @@ import { Customer } from '../entities/Customer.entity';
 import { AccountViewService } from '../services/AccountViewService';
 
 export class CustomerController {
-  private customerRepo = AppDataSource.getRepository(Customer);
+  private get customerRepo() {
+    return AppDataSource.getRepository(Customer);
+  }
 
   // GET /api/customers
   async getAll(req: any, res: any) {
     try {
       const customers = await this.customerRepo.find({
         order: { updatedAt: 'DESC' },
-        relations: ['paymentPlans'], // Include plans to show status badges
+        relations: ['paymentPlans', 'invoices'], // Include plans and invoices for status badges
       });
       return res.json(customers);
     } catch (error) {
@@ -43,9 +45,9 @@ export class CustomerController {
   async triggerSync(req: any, res: any) {
     try {
       const avService = new AccountViewService(AppDataSource);
-      
+
       console.log('🔄 Manual sync triggered via API...');
-      
+
       // Run the sync logic
       await avService.syncCustomers();
       await avService.syncInvoices();

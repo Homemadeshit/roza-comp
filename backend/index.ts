@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import { AppDataSource } from './db';
 import { CustomerController } from './controllers/CustomerController';
+import { DictionaryController } from './controllers/DictionaryController';
 import { AccountViewService } from './services/AccountViewService';
 
 const app = express();
@@ -15,13 +16,14 @@ app.use(express.json() as any);
 
 // Initialize Controllers
 const customerController = new CustomerController();
+const dictionaryController = new DictionaryController();
 
 // --- API Routes ---
 
 // Auth (New)
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  
+
   console.log(`🔐 Login attempt received for: ${email}`); // Debug log
 
   // In a full production app, you would check a Users table and hash passwords.
@@ -32,10 +34,10 @@ app.post('/api/login', (req, res) => {
   if (email === adminEmail && password === adminPass) {
     console.log('✅ Login successful');
     // Return a mock token for the frontend to store
-    return res.json({ 
-      success: true, 
+    return res.json({
+      success: true,
       token: 'secure-session-token-' + Date.now(),
-      user: { name: 'Finance Admin', email } 
+      user: { name: 'Finance Admin', email }
     });
   }
 
@@ -56,31 +58,24 @@ app.get('/api/auth/start', (req, res) => {
 // 2. Callback: AccountView redirects here with ?code=...
 app.get('/oauth/callback', async (req, res) => {
   const { code } = req.query;
-  
+
   if (code) {
-    console.log('✅ OAuth Code Received:', code);
-    
+    /* AUTO-EXCHANGE ENABLED */
     try {
       const avService = new AccountViewService(AppDataSource);
       const tokenData = await avService.exchangeCodeForToken(code as string);
-      
+
       res.send(`
         <div style="font-family: sans-serif; padding: 2rem;">
           <h1 style="color: #059669;">Authentication Successful!</h1>
-          <p>The backend has successfully exchanged the authorization code for an access token.</p>
+          <p>You can now use the API.</p>
           <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
-             <strong>Access Token:</strong> ${tokenData.access_token.substring(0, 15)}...<br/>
-             <strong>Expires In:</strong> ${tokenData.expires_in} seconds
+             <strong>Access Token:</strong> ${tokenData.access_token}<br/>
           </div>
-          <p style="margin-top: 2rem;">You can now close this window or trigger a sync via Postman.</p>
         </div>
       `);
     } catch (error) {
-       res.status(500).send(`
-         <h1 style="color: #dc2626;">Authentication Failed</h1>
-         <p>${error.message}</p>
-         <pre>${JSON.stringify(error.response?.data, null, 2)}</pre>
-       `);
+      res.status(500).send(`Authentication Failed: ${error.message}`);
     }
   } else {
     res.status(400).send('No code returned from AccountView.');
@@ -94,7 +89,24 @@ app.get('/api/customers', (req, res) => customerController.getAll(req, res));
 app.get('/api/customers/:id', (req, res) => customerController.getOne(req, res));
 
 // Operations
+// Operations
 app.post('/api/sync', (req, res) => customerController.triggerSync(req, res));
+app.get('/api/sync', (req, res) => customerController.triggerSync(req, res)); // Allow GET for easy browser testing
+
+// Test Route for AccountViewBusinessObjects
+app.get('/api/test/bo/:name', async (req, res) => {
+  try {
+    const avService = new AccountViewService(AppDataSource);
+    const data = await avService.getBusinessObjects(req.params.name);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message, details: error.response?.data });
+  }
+});
+
+// Dictionary
+app.get('/api/dictionary/tables', (req, res) => dictionaryController.getTables(req, res));
+app.get('/api/dictionary/fields', (req, res) => dictionaryController.getFields(req, res));
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -106,6 +118,10 @@ async function startServer() {
   try {
     await AppDataSource.initialize();
     console.log('💽 Database Connected');
+
+    app.get('/', (req, res) => {
+      res.send('Backend is running!');
+    });
 
     app.listen(PORT, () => {
       console.log(`🚀 Backend Server running on http://localhost:${PORT}`);
