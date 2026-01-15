@@ -18,7 +18,6 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors() as any);
-app.options('*', cors() as any); // Handle Preflight
 app.use(express.json() as any);
 
 // Request Logger (Debug 405 issues)
@@ -126,8 +125,9 @@ app.get('/health', (req, res) => {
 });
 
 // --- API FALLBACK (Prevents 405 on POST if route missing) ---
-app.use('/api/*', (req, res) => {
-  console.log(`⚠️ API Route Not Found: ${req.method} ${req.originalUrl}`);
+// Use prefix matching '/api' to catch unhandled API requests
+app.use('/api', (req, res) => {
+  console.log(`⚠️ API Route Not Found: ${req.method} ${req.json ? 'JSON ' : ''}${req.originalUrl}`);
   res.status(404).json({ error: 'API endpoint not found' });
 });
 
@@ -136,7 +136,8 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
-app.get('*', (req, res) => {
+// Using app.use() as a generic fallback for SPA Routing
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
