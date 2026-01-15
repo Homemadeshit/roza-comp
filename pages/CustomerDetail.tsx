@@ -102,13 +102,14 @@ const CustomerDetail = () => {
                     <p className="text-2xl font-bold text-red-600 mt-1">€{totalOverdue.toLocaleString()}</p>
                 </div>
                 <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mb-2">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Credit Limit</p>
                         <button
                             onClick={() => setIsEditingCredit(!isEditingCredit)}
-                            className="text-slate-400 hover:text-slate-600"
+                            className="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors uppercase tracking-wide border border-blue-100"
                         >
-                            <span className="material-symbols-outlined text-sm">edit</span>
+                            <span className="material-symbols-outlined text-[14px]">edit</span>
+                            Edit
                         </button>
                     </div>
 
