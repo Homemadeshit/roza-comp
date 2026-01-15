@@ -2,6 +2,7 @@ import 'dotenv/config'; // Load .env file
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { AppDataSource } from './db';
 import { CustomerController } from './controllers/CustomerController';
 import { DictionaryController } from './controllers/DictionaryController';
@@ -119,8 +120,13 @@ async function startServer() {
     await AppDataSource.initialize();
     console.log('💽 Database Connected');
 
-    app.get('/', (req, res) => {
-      res.send('Backend is running!');
+    // Serve static files from the React app
+    app.use(express.static(path.join(__dirname, '../dist')));
+
+    // The "catchall" handler: for any request that doesn't
+    // match one above, send back React's index.html file.
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../dist/index.html'));
     });
 
     app.listen(PORT, () => {
