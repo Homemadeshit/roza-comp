@@ -5,7 +5,7 @@ const Sidebar = () => {
   const navItems = [
     { name: 'Dashboard', icon: 'dashboard', path: '/' },
     { name: 'Collections', icon: 'payments', path: '/collections' }, // New Dashboard
-    { name: 'Invoices', icon: 'receipt_long', path: '/disputes/8823' }, // Linking to dispute for demo
+    // { name: 'Invoices', icon: 'receipt_long', path: '/disputes/8823' }, // Linking to dispute for demo
     { name: 'Customers', icon: 'people', path: '/customers' },
     { name: 'Reports', icon: 'bar_chart', path: '/notifications/blocked' }, // Linking to notification for demo
     { name: 'Settings', icon: 'settings', path: '/settings' },
