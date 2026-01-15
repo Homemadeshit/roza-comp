@@ -8,6 +8,10 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [selectedCustomer, setSelectedCustomer] = React.useState<any>(null);
 
+  // State for Sorting & Filtering
+  const [sortBy, setSortBy] = React.useState<'urgency' | 'balance' | 'name'>('urgency');
+  const [filterType, setFilterType] = React.useState<'all' | 'high_risk' | 'overdue'>('all');
+
   // KPI Calculations
   const totalCustomers = MOCK_COLLECTIONS_DATA.length;
   const highRiskCount = MOCK_COLLECTIONS_DATA.filter(c => c.risk === 'HIGH').length;
@@ -16,11 +20,36 @@ const Dashboard = () => {
   const percentGood = Math.round((goodStandingCount / totalCustomers) * 100);
   const percentRisk = Math.round((highRiskCount / totalCustomers) * 100);
 
-  // Action Items: High Risk or Overdue
-  const actionItems = MOCK_COLLECTIONS_DATA.filter(c => {
-    const isOverdue = c.invoices.some(i => i.daysOverdue > 0);
-    return c.risk === 'HIGH' || isOverdue;
-  });
+  // Action Items Logic: Filter -> Sort
+  const actionItems = React.useMemo(() => {
+    // 1. Base Criteria: High Risk OR Overdue
+    let items = MOCK_COLLECTIONS_DATA.filter(c => {
+      const isOverdue = c.invoices.some(i => i.daysOverdue > 0);
+      return c.risk === 'HIGH' || isOverdue;
+    });
+
+    // 2. Apply User Filter
+    if (filterType === 'high_risk') {
+      items = items.filter(c => c.risk === 'HIGH');
+    } else if (filterType === 'overdue') {
+      items = items.filter(c => c.invoices.some(i => i.daysOverdue > 0));
+    }
+
+    // 3. Apply Sorting
+    return items.sort((a, b) => {
+      if (sortBy === 'balance') {
+        return b.currentBalance - a.currentBalance;
+      } else if (sortBy === 'name') {
+        return a.companyName.localeCompare(b.companyName);
+      } else {
+        // Urgency: High Risk first, then Overdue Days (Mock approx)
+        if (a.risk === 'HIGH' && b.risk !== 'HIGH') return -1;
+        if (a.risk !== 'HIGH' && b.risk === 'HIGH') return 1;
+        return b.currentBalance - a.currentBalance; // Fallback to balance
+      }
+    });
+
+  }, [sortBy, filterType]);
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -98,12 +127,27 @@ const Dashboard = () => {
             <span className="bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 text-xs px-2.5 py-0.5 rounded-full font-bold border border-red-200 dark:border-red-500/20">{actionItems.length} Priority</span>
           </h2>
           <div className="flex gap-2">
-            <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              <span className="material-symbols-outlined text-[16px]">filter_list</span> Filters
-            </button>
-            <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              <span className="material-symbols-outlined text-[16px]">sort</span> Sort by: Urgency
-            </button>
+            <div className="flex gap-2">
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as any)}
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus:ring-2 focus:ring-blue-500/20 outline-none cursor-pointer appearance-none"
+              >
+                <option value="all">All Issues</option>
+                <option value="high_risk">High Risk Only</option>
+                <option value="overdue">Overdue Only</option>
+              </select>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus:ring-2 focus:ring-blue-500/20 outline-none cursor-pointer appearance-none"
+              >
+                <option value="urgency">Sort: Urgency</option>
+                <option value="balance">Sort: Balance (High-Low)</option>
+                <option value="name">Sort: A-Z</option>
+              </select>
+            </div>
           </div>
         </div>
 
