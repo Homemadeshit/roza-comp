@@ -1,7 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
 
 const NotificationView = () => {
+  const { id } = useParams();
+
+  // Logic: If ID is 'blocked', find the first High Risk customer to demo. 
+  // Otherwise find by ID.
+  const customer = id === 'blocked'
+    ? MOCK_COLLECTIONS_DATA.find(c => c.risk === 'HIGH')
+    : MOCK_COLLECTIONS_DATA.find(c => c.id === id);
+
+  if (!customer) {
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold">No blocked customer found.</h2>
+        <Link to="/" className="text-blue-500 hover:underline">Return to Dashboard</Link>
+      </div>
+    );
+  }
+
+  const overdueInvoices = customer.invoices.filter(i => i.daysOverdue > 0);
+  const creditUsagePercent = Math.min(Math.round((customer.currentBalance / customer.creditLimit) * 100), 100);
+
   return (
     <div className="max-w-[1200px] mx-auto flex flex-col gap-6 pb-20">
       {/* Breadcrumb */}
@@ -43,15 +64,17 @@ const NotificationView = () => {
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
               <div className="flex items-start justify-between mb-5">
                 <div className="flex items-center gap-3">
-                   <div className="h-12 w-12 rounded-lg bg-slate-200 dark:bg-slate-700 bg-cover bg-center" style={{ backgroundImage: 'url(https://i.pravatar.cc/150?u=acme_corp)' }}></div>
+                  <div className="h-12 w-12 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xl text-slate-600 dark:text-slate-300">
+                    {customer.companyName.substring(0, 2).toUpperCase()}
+                  </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-lg">Acme Corp</h3>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">ID: #88392-AX</div>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-lg">{customer.companyName}</h3>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">ID: {customer.accountViewId}</div>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-xs text-slate-500 dark:text-slate-400 mb-0.5 font-medium uppercase">Outstanding</div>
-                  <div className="font-bold text-slate-900 dark:text-white text-lg">$45,200.00</div>
+                  <div className="font-bold text-slate-900 dark:text-white text-lg">€{customer.currentBalance.toLocaleString()}</div>
                 </div>
               </div>
               <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
@@ -88,21 +111,21 @@ const NotificationView = () => {
               <div>
                 <div className="flex justify-between items-end mb-2">
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Credit Limit Usage</span>
-                  <span className="text-sm font-bold text-red-600">113%</span>
+                  <span className="text-sm font-bold text-red-600">{creditUsagePercent}%</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                  <div className="bg-red-500 h-full rounded-full w-full"></div>
+                  <div className="bg-red-500 h-full rounded-full transition-all" style={{ width: `${creditUsagePercent}%` }}></div>
                 </div>
                 <div className="flex justify-between mt-2 text-xs text-slate-500 dark:text-slate-400">
-                  <span>Current: $45.2k</span>
-                  <span>Limit: $40k</span>
+                  <span>Current: €{customer.currentBalance.toLocaleString()}</span>
+                  <span>Limit: €{customer.creditLimit.toLocaleString()}</span>
                 </div>
               </div>
               <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20">
                 <span className="material-symbols-outlined text-red-500 mt-0.5 text-[20px]">warning</span>
                 <div>
                   <p className="text-sm font-bold text-slate-900 dark:text-white">Severe Delinquency</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">3 invoices are currently &gt;90 days overdue.</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">{overdueInvoices.length} invoices are currently overdue.</p>
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-transparent mt-auto">
@@ -130,8 +153,8 @@ const NotificationView = () => {
               </p>
             </div>
             <div className="bg-slate-50 dark:bg-slate-950/40 p-5 border-t border-slate-100 dark:border-slate-800 space-y-3 mt-auto">
-              <Link to="/customers/acme" className="group w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm shadow-blue-500/20 transition-all">
-                <span>Draft Payment Plan</span>
+              <Link to={`/customers/${customer.id}`} className="group w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm shadow-blue-500/20 transition-all">
+                <span>Contact Customer</span>
                 <span className="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
               </Link>
               <div className="relative flex py-1 items-center">
@@ -166,30 +189,24 @@ const NotificationView = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">INV-2023-001</td>
-                    <td className="px-6 py-4">Oct 12, 2023</td>
-                    <td className="px-6 py-4">Nov 12, 2023</td>
-                    <td className="px-6 py-4 text-right text-slate-900 dark:text-white font-medium">$4,500.00</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center rounded-md bg-red-50 dark:bg-red-400/10 px-2 py-1 text-xs font-bold text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10 dark:ring-red-400/20">98 Days Overdue</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-slate-400 hover:text-blue-500 dark:hover:text-white font-medium text-sm transition-colors">View</button>
-                    </td>
-                  </tr>
-                   <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">INV-2023-045</td>
-                    <td className="px-6 py-4">Oct 20, 2023</td>
-                    <td className="px-6 py-4">Nov 20, 2023</td>
-                    <td className="px-6 py-4 text-right text-slate-900 dark:text-white font-medium">$3,200.00</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center rounded-md bg-red-50 dark:bg-red-400/10 px-2 py-1 text-xs font-bold text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10 dark:ring-red-400/20">90 Days Overdue</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-slate-400 hover:text-blue-500 dark:hover:text-white font-medium text-sm transition-colors">View</button>
-                    </td>
-                  </tr>
+                  {overdueInvoices.length > 0 ? overdueInvoices.map(inv => (
+                    <tr key={inv.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">#{inv.invoiceNumber}</td>
+                      <td className="px-6 py-4">{inv.issueDate}</td>
+                      <td className="px-6 py-4">{inv.dueDate}</td>
+                      <td className="px-6 py-4 text-right text-slate-900 dark:text-white font-medium">€{inv.openAmount.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center rounded-md bg-red-50 dark:bg-red-400/10 px-2 py-1 text-xs font-bold text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/10 dark:ring-red-400/20">{inv.daysOverdue} Days Overdue</span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="text-slate-400 hover:text-blue-500 dark:hover:text-white font-medium text-sm transition-colors">View</button>
+                      </td>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-4 text-center">No overdue invoices found for this flagged account? (Check data)</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
