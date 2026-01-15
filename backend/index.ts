@@ -15,6 +15,12 @@ const PORT = process.env.PORT || 3001;
 app.use(cors() as any); // Allow React Frontend to access this API
 app.use(express.json() as any);
 
+// Request Logger (Debug 405 issues)
+app.use((req, res, next) => {
+  console.log(`📡 ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Initialize Controllers
 const customerController = new CustomerController();
 const dictionaryController = new DictionaryController();
@@ -90,7 +96,6 @@ app.get('/api/customers', (req, res) => customerController.getAll(req, res));
 app.get('/api/customers/:id', (req, res) => customerController.getOne(req, res));
 
 // Operations
-// Operations
 app.post('/api/sync', (req, res) => customerController.triggerSync(req, res));
 app.get('/api/sync', (req, res) => customerController.triggerSync(req, res)); // Allow GET for easy browser testing
 
@@ -114,20 +119,20 @@ app.get('/health', (req, res) => {
   res.json({ status: 'UP', timestamp: new Date() });
 });
 
+// --- STATIC FILES (Moved out of startServer to be deterministic) ---
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 // Start Server
 async function startServer() {
   try {
     await AppDataSource.initialize();
     console.log('💽 Database Connected');
-
-    // Serve static files from the React app
-    app.use(express.static(path.join(__dirname, '../dist')));
-
-    // The "catchall" handler: for any request that doesn't
-    // match one above, send back React's index.html file.
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../dist/index.html'));
-    });
 
     app.listen(PORT, () => {
       console.log(`🚀 Backend Server running on http://localhost:${PORT}`);
