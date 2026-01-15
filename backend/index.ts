@@ -3,16 +3,22 @@ import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import { fileURLToPath } from 'url'; // Required for ESM __dirname
 import { AppDataSource } from './db';
 import { CustomerController } from './controllers/CustomerController';
 import { DictionaryController } from './controllers/DictionaryController';
 import { AccountViewService } from './services/AccountViewService';
 
+// Fix __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors() as any); // Allow React Frontend to access this API
+app.use(cors() as any);
+app.options('*', cors() as any); // Handle Preflight
 app.use(express.json() as any);
 
 // Request Logger (Debug 405 issues)
@@ -119,7 +125,13 @@ app.get('/health', (req, res) => {
   res.json({ status: 'UP', timestamp: new Date() });
 });
 
-// --- STATIC FILES (Moved out of startServer to be deterministic) ---
+// --- API FALLBACK (Prevents 405 on POST if route missing) ---
+app.use('/api/*', (req, res) => {
+  console.log(`⚠️ API Route Not Found: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ error: 'API endpoint not found' });
+});
+
+// --- STATIC FILES ---
 app.use(express.static(path.join(__dirname, '../dist')));
 
 // The "catchall" handler: for any request that doesn't
