@@ -7,7 +7,20 @@ const CustomerDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [selectedInvoice, setSelectedInvoice] = React.useState<string | null>(null);
+    const [isEditingCredit, setIsEditingCredit] = React.useState(false);
+
+    // Find customer. Note: In a real app, this would come from an API.
+    // We use a mutable reference here for the demo to show immediate updates.
     const customer = MOCK_COLLECTIONS_DATA.find(c => c.id === id);
+    const [currentCreditLimit, setCurrentCreditLimit] = React.useState(customer?.creditLimit || 0);
+
+    const handleSaveCreditLimit = (newLimit: number) => {
+        if (customer) {
+            customer.creditLimit = newLimit; // Update mock ref
+            setCurrentCreditLimit(newLimit);
+            setIsEditingCredit(false);
+        }
+    };
 
     if (!customer) {
         return (
@@ -89,12 +102,37 @@ const CustomerDetail = () => {
                     <p className="text-2xl font-bold text-red-600 mt-1">€{totalOverdue.toLocaleString()}</p>
                 </div>
                 <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Credit Limit</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">€{customer.creditLimit.toLocaleString()}</p>
+                    <div className="flex justify-between items-center">
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Credit Limit</p>
+                        <button
+                            onClick={() => setIsEditingCredit(!isEditingCredit)}
+                            className="text-slate-400 hover:text-slate-600"
+                        >
+                            <span className="material-symbols-outlined text-sm">edit</span>
+                        </button>
+                    </div>
+
+                    {isEditingCredit ? (
+                        <div className="mt-1 flex items-center gap-2">
+                            <input
+                                type="number"
+                                autoFocus
+                                className="w-full border rounded px-2 py-1 text-lg font-bold"
+                                defaultValue={currentCreditLimit}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSaveCreditLimit(Number(e.currentTarget.value));
+                                }}
+                                onBlur={(e) => handleSaveCreditLimit(Number(e.target.value))}
+                            />
+                        </div>
+                    ) : (
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">€{currentCreditLimit.toLocaleString()}</p>
+                    )}
+
                     <div className="w-full bg-slate-100 h-1.5 mt-2 rounded-full overflow-hidden">
                         <div
-                            className={`h-full rounded-full ${customer.currentBalance > customer.creditLimit ? 'bg-red-500' : 'bg-blue-500'}`}
-                            style={{ width: `${Math.min((customer.currentBalance / customer.creditLimit) * 100, 100)}%` }}
+                            className={`h-full rounded-full ${customer.currentBalance > currentCreditLimit ? 'bg-red-500' : 'bg-blue-500'}`}
+                            style={{ width: `${Math.min((customer.currentBalance / currentCreditLimit) * 100, 100)}%` }}
                         ></div>
                     </div>
                 </div>
