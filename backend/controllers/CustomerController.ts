@@ -102,4 +102,50 @@ export class CustomerController {
       return res.status(500).json({ error: 'Failed to create customer' });
     }
   }
+
+  // PATCH /api/customers/:id
+  async update(req: any, res: any) {
+    try {
+      const { id } = req.params;
+      const { notes, creditLimit, ...otherFields } = req.body;
+
+      const customer = await this.customerRepo.findOne({ where: { id } });
+
+      if (!customer) {
+        return res.status(404).json({ error: 'Customer not found' });
+      }
+
+      if (notes !== undefined) customer.notes = notes;
+      if (creditLimit !== undefined) customer.creditLimit = creditLimit;
+
+      // Allow updating other fields if needed, or be restrictive.
+      // For now, we mainly want notes and credit limit, but let's allow updating contact info too.
+      Object.assign(customer, otherFields);
+
+      await this.customerRepo.save(customer);
+
+      return res.json(customer);
+    } catch (error) {
+      console.error('Error updating customer:', error);
+      return res.status(500).json({ error: 'Failed to update customer' });
+    }
+  }
+
+  // DELETE /api/customers/:id
+  async delete(req: any, res: any) {
+    try {
+      const { id } = req.params;
+      const customer = await this.customerRepo.findOne({ where: { id } });
+
+      if (!customer) {
+        return res.status(404).json({ error: 'Customer not found' });
+      }
+
+      await this.customerRepo.remove(customer);
+      return res.json({ message: 'Customer deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      return res.status(500).json({ error: 'Failed to delete customer' });
+    }
+  }
 }

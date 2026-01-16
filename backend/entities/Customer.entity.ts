@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Invoice } from './Invoice.entity';
 import { PaymentPlan } from './PaymentPlan.entity';
+import { Contact } from './Contact.entity';
 
 @Entity('customers')
 export class Customer {
@@ -62,6 +63,9 @@ export class Customer {
   @Column({ type: 'integer', default: 30 })
   maxPaymentDays: number; // e.g., Net 30
 
+  @Column({ type: 'text', nullable: true })
+  notes: string; // Internal notes
+
   @Column({ type: 'boolean', default: false })
   directDebit: boolean; // Derived from DD_ACT
 
@@ -73,11 +77,14 @@ export class Customer {
   @Column({ type: 'boolean', default: false })
   isBlockedLocally: boolean; // Internal Finance Block
 
-  @OneToMany(() => Invoice, (invoice) => invoice.customer)
+  @OneToMany(() => Invoice, (invoice) => invoice.customer, { cascade: true, onDelete: 'CASCADE' })
   invoices: Invoice[];
 
-  @OneToMany(() => PaymentPlan, (plan) => plan.customer)
+  @OneToMany(() => PaymentPlan, (plan) => plan.customer, { cascade: true, onDelete: 'CASCADE' })
   paymentPlans: PaymentPlan[];
+
+  @OneToMany(() => Contact, (contact) => contact.customer, { cascade: true })
+  contacts: Contact[];
 
   @CreateDateColumn()
   createdAt: Date;

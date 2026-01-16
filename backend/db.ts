@@ -7,11 +7,12 @@ import { DictionaryTable } from './entities/DictionaryTable.entity';
 import { DictionaryField } from './entities/DictionaryField.entity';
 
 import { Company } from './entities/Company.entity';
+import { Contact } from './entities/Contact.entity';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: 'database.sqlite',
   synchronize: true, // Note: In production, use migrations instead of synchronize: true
   logging: false,
-  entities: [Customer, Invoice, PaymentPlan, DictionaryTable, DictionaryField, Company],
+  entities: [Customer, Invoice, PaymentPlan, DictionaryTable, DictionaryField, Company, Contact],
 });

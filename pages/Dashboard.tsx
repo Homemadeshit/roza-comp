@@ -1,30 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
+// import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
+import { api } from '../utils/api';
 import ReminderModal from '../components/ReminderModal';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCustomer, setSelectedCustomer] = React.useState<any>(null);
 
   // State for Sorting & Filtering
   const [sortBy, setSortBy] = React.useState<'urgency' | 'balance' | 'name'>('urgency');
   const [filterType, setFilterType] = React.useState<'all' | 'high_risk' | 'overdue'>('all');
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get('/customers');
+        // We might need to augment the data with 'currentBalance' if the API doesn't compute it nicely for us
+        // But from previous CustomerList code, we saw we needed to compute it.
+        const enhancedData = response.data.map((c: any) => {
+          const balance = c.invoices?.reduce((sum: number, i: any) => sum + i.openAmount, 0) || 0;
+          return { ...c, currentBalance: balance }; // Add computed balance for sorting
+        });
+        setCustomers(enhancedData);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   // KPI Calculations
-  const totalCustomers = MOCK_COLLECTIONS_DATA.length;
-  const highRiskCount = MOCK_COLLECTIONS_DATA.filter(c => c.risk === 'HIGH').length;
+  const totalCustomers = customers.length;
+
+  // Calculate distinct customers who have overdue invoices or are marked as high risk
+  const customersWithIssues = customers.filter(c => {
+    const hasOverdueInvoices = c.invoices?.some((i: any) => i.daysOverdue > 0 || (new Date(i.dueDate) < new Date() && i.openAmount > 0));
+    const isHighRiskProfile = c.risk === 'HIGH';
+    return hasOverdueInvoices || isHighRiskProfile;
+  });
+
+  const highRiskCount = customersWithIssues.length;
   const goodStandingCount = totalCustomers - highRiskCount;
 
-  const percentGood = Math.round((goodStandingCount / totalCustomers) * 100);
-  const percentRisk = Math.round((highRiskCount / totalCustomers) * 100);
+  // Percentages
+  const percentGood = totalCustomers > 0 ? Math.round((goodStandingCount / totalCustomers) * 100) : 0;
+  const percentRisk = totalCustomers > 0 ? Math.round((highRiskCount / totalCustomers) * 100) : 0;
+
+  // Direct Debit (Mock logic to be replaced with real data field later)
+  // Assuming 'directDebit' is a boolean on the customer object if it exists.
+  const directDebitCount = customers.filter(c => c.directDebit).length;
+  const percentDirectDebit = totalCustomers > 0 ? Math.round((directDebitCount / totalCustomers) * 100) : 0;
+
 
   // Action Items Logic: Filter -> Sort
   const actionItems = React.useMemo(() => {
     // 1. Base Criteria: High Risk OR Overdue
-    let items = MOCK_COLLECTIONS_DATA.filter(c => {
-      const isOverdue = c.invoices.some(i => i.daysOverdue > 0);
+    let items = customers.filter(c => {
+      const isOverdue = c.invoices?.some((i: any) => i.daysOverdue > 0 || (new Date(i.dueDate) < new Date() && i.openAmount > 0));
       return c.risk === 'HIGH' || isOverdue;
     });
 
@@ -32,7 +70,7 @@ const Dashboard = () => {
     if (filterType === 'high_risk') {
       items = items.filter(c => c.risk === 'HIGH');
     } else if (filterType === 'overdue') {
-      items = items.filter(c => c.invoices.some(i => i.daysOverdue > 0));
+      items = items.filter(c => c.invoices?.some((i: any) => i.daysOverdue > 0));
     }
 
     // 3. Apply Sorting
@@ -49,7 +87,11 @@ const Dashboard = () => {
       }
     });
 
-  }, [sortBy, filterType]);
+  }, [customers, sortBy, filterType]);
+
+  if (loading) {
+    return <div className="p-10 text-center">Loading Dashboard...</div>;
+  }
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-8 animate-in fade-in duration-500">
@@ -87,14 +129,14 @@ const Dashboard = () => {
           <div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Direct Debit Active</p>
             <div className="flex items-baseline gap-3">
-              <h3 className="text-3xl font-bold text-slate-900 dark:text-white">75%</h3>
+              <h3 className="text-3xl font-bold text-slate-900 dark:text-white">{percentDirectDebit}%</h3>
               <span className="text-blue-500 text-xs font-medium flex items-center bg-blue-500/10 px-1.5 py-0.5 rounded">
-                Stable
+                {directDebitCount} Active
               </span>
             </div>
           </div>
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div className="bg-blue-500 h-full rounded-full w-[75%] group-hover:bg-blue-400 transition-colors"></div>
+            <div className="bg-blue-500 h-full rounded-full transition-colors" style={{ width: `${percentDirectDebit}%` }}></div>
           </div>
         </div>
 
@@ -109,7 +151,7 @@ const Dashboard = () => {
             <div className="flex items-baseline gap-3">
               <h3 className="text-3xl font-bold text-red-700 dark:text-red-400">{percentRisk}%</h3>
               <span className="text-red-600 dark:text-red-400 text-xs font-medium flex items-center bg-red-500/10 px-1.5 py-0.5 rounded">
-                <span className="material-symbols-outlined text-[14px] mr-1">warning</span> {highRiskCount} Client
+                <span className="material-symbols-outlined text-[14px] mr-1">warning</span> {highRiskCount} Client{highRiskCount !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
@@ -165,7 +207,7 @@ const Dashboard = () => {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                 {actionItems.map(customer => (
-                  <tr key={customer.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/collections/customer/${customer.id}`)}>
+                  <tr key={customer.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer" onClick={() => navigate(`/customers/${customer.id}`)}>
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-semibold text-slate-900 dark:text-white text-sm group-hover:text-blue-500 transition-colors">{customer.companyName}</span>
@@ -180,13 +222,19 @@ const Dashboard = () => {
                       <p className="text-xs text-slate-500 dark:text-slate-400 ml-6.5 mt-0.5 pl-6.5">Multiple items pending</p>
                     </td>
                     <td className="py-4 px-6 text-right">
-                      <span className="font-mono text-sm font-bold text-slate-900 dark:text-white">€{customer.currentBalance.toLocaleString()}</span>
+                      <span className="font-mono text-sm font-bold text-slate-900 dark:text-white">€{customer.currentBalance.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}</span>
                     </td>
                     <td className="py-4 px-6">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                        High Risk
-                      </span>
+                      {customer.risk === 'HIGH' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                          High Risk
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                          Overdue
+                        </span>
+                      )}
                     </td>
                     <td className="py-4 px-6 text-right">
                       <button

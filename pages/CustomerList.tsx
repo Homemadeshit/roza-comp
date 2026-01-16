@@ -16,9 +16,10 @@ interface Customer {
     // Computed/Derived properties for display
     status: 'Overdue' | 'At Risk' | 'Disputed' | 'Current';
     initials: string;
+    isShell: boolean;
 }
 
-const StatusBadge = ({ status }: { status: Customer['status'] }) => {
+const StatusBadge = ({ status, isShell }: { status: Customer['status']; isShell?: boolean }) => {
     const colors = {
         'Overdue': 'bg-red-50 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
         'At Risk': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20',
@@ -34,10 +35,17 @@ const StatusBadge = ({ status }: { status: Customer['status'] }) => {
     };
 
     return (
-        <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs font-medium ${colors[status]}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${dots[status]}`}></span>
-            {status}
-        </span>
+        <div className="flex gap-2">
+            <span className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs font-medium ${colors[status]}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${dots[status]}`}></span>
+                {status}
+            </span>
+            {isShell && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full border border-slate-200 bg-slate-100 text-slate-600 text-xs font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">
+                    Profile Missing
+                </span>
+            )}
+        </div>
     );
 };
 
@@ -55,14 +63,19 @@ const CustomerList = () => {
             const response = await api.get('/customers');
 
             const mappedData: Customer[] = response.data.map((c: any) => {
+                const invoices = c.invoices || [];
                 let status: Customer['status'] = 'Current';
 
                 // If invoices are loaded, check them. Otherwise rely on balance.
-                const hasOverdue = c.invoices?.some((i: any) => i.status === 'OVERDUE' || (new Date(i.dueDate) < new Date() && i.openAmount > 0));
+                const hasOverdue = invoices.some((i: any) => i.status === 'OVERDUE' || (new Date(i.dueDate) < new Date() && Number(i.openAmount) > 0));
+
+                // Calculate balance from invoices if available and non-zero sum, otherwise use entity balance
+                const invoiceSum = invoices.reduce((sum: number, inv: any) => sum + (Number(inv.openAmount) || 0), 0);
+                const currentBalance = invoiceSum !== 0 ? invoiceSum : (c.currentBalance || 0);
 
                 if (hasOverdue) status = 'Overdue';
-                else if (c.currentBalance > c.creditLimit) status = 'At Risk';
-                else if (c.currentBalance < 0) status = 'Disputed';
+                else if (currentBalance > c.creditLimit) status = 'At Risk';
+                else if (currentBalance < 0) status = 'Disputed';
 
                 return {
                     id: c.id,
@@ -70,13 +83,17 @@ const CustomerList = () => {
                     accountViewId: c.accountViewId || 'N/A',
                     email: c.email || '',
                     creditLimit: c.creditLimit || 0,
-                    currentBalance: c.currentBalance || 0,
+                    currentBalance: currentBalance,
                     maxPaymentDays: c.maxPaymentDays || 30,
                     isBlockedLocally: false,
                     status: status,
-                    initials: c.companyName.substring(0, 2).toUpperCase()
+                    initials: c.companyName.substring(0, 2).toUpperCase(),
+                    isShell: c.notes === 'Auto-created from Invoice Import'
                 };
             });
+
+            // Sort by Balance Descending (Highest Debtors First)
+            mappedData.sort((a, b) => b.currentBalance - a.currentBalance);
 
             setCustomers(mappedData);
         } catch (error) {
@@ -214,7 +231,7 @@ const CustomerList = () => {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <StatusBadge status={customer.status} />
+                                        <StatusBadge status={customer.status} isShell={customer.isShell} />
                                     </td>
                                     <td className="py-4 px-6 text-right font-mono text-sm text-slate-900 dark:text-white font-medium">
                                         € {customer.currentBalance.toLocaleString('nl-NL', { minimumFractionDigits: 2 })}
@@ -251,7 +268,5 @@ const CustomerList = () => {
         </div>
     );
 };
-
-
 
 export default CustomerList;

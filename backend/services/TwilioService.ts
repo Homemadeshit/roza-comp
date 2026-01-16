@@ -41,6 +41,29 @@ export class TwilioService {
         }
     }
 
+    async sendOverdueSummary(to: string, customerName: string, count: number, totalAmount: number, paymentLink: string) {
+        if (!this.client) {
+            console.log(`[MOCK TWILIO] Sending Summary WhatsApp to ${to}: "Hi ${customerName}, you have ${count} overdue invoices totaling €${totalAmount.toFixed(2)}. Pay: ${paymentLink}"`);
+            return { sid: 'mock-summary-sid-' + Date.now(), status: 'queued (mock)' };
+        }
+
+        try {
+            const formattedTo = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`;
+
+            const message = await this.client.messages.create({
+                body: `Hello ${customerName},\n\nThis is a reminder that you have *${count} overdue invoices* totaling *€${totalAmount.toFixed(2)}*.\n\nPlease check your account and arrange payment: ${paymentLink}\n\nThank you,\nFinance Team`,
+                from: this.fromNumber,
+                to: formattedTo
+            });
+
+            console.log(`✅ WhatsApp Summary sent to ${to}, SID: ${message.sid}`);
+            return message;
+        } catch (error) {
+            console.error('❌ Failed to send WhatsApp Summary:', error);
+            throw error;
+        }
+    }
+
 
     async sendWhatsAppTemplate(to: string, templateSid: string, variables: Record<string, string>) {
         if (!this.client) {

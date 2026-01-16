@@ -13,6 +13,80 @@ const CustomerDetail = () => {
     // Invoices State
     const [selectedInvoice, setSelectedInvoice] = React.useState<string | null>(null);
 
+    // Editing State
+    const [isNoteModalOpen, setIsNoteModalOpen] = React.useState(false);
+    const [isEditingLimit, setIsEditingLimit] = React.useState(false);
+    const [creditLimitInput, setCreditLimitInput] = React.useState('');
+
+    const handleSaveNote = async (newNote: string) => {
+        try {
+            const response = await fetch(`/api/customers/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ notes: newNote }),
+            });
+            if (response.ok) {
+                setCustomer({ ...customer, notes: newNote });
+                setIsNoteModalOpen(false);
+            } else {
+                alert('Failed to save note');
+            }
+        } catch (error) {
+            console.error('Error saving note:', error);
+            alert('Error saving note');
+        }
+    };
+
+    const handleSaveCreditLimit = async () => {
+        const newLimit = parseFloat(creditLimitInput);
+        if (isNaN(newLimit)) {
+            alert('Please enter a valid number');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/customers/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ creditLimit: newLimit }),
+            });
+            if (response.ok) {
+                setCustomer({ ...customer, creditLimit: newLimit });
+                setIsEditingLimit(false);
+            } else {
+                alert('Failed to update credit limit');
+            }
+        } catch (error) {
+            console.error('Error updating credit limit:', error);
+            alert('Error updating credit limit');
+        }
+    };
+
+    const handleSendReminder = async () => {
+        if (!window.confirm(`Send WhatsApp reminder to ${customer.whatsappPhone}?`)) return;
+
+        try {
+            const response = await fetch('/api/reminders/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customerId: customer.id,
+                    invoiceNumbers: customer.invoices.filter((inv: any) => inv.status === 'OVERDUE').map((inv: any) => inv.invoiceNumber),
+                }),
+            });
+
+            if (response.ok) {
+                alert('Reminder sent successfully!');
+            } else {
+                const err = await response.json();
+                alert(`Failed to send reminder: ${err.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error sending reminder:', error);
+            alert('Error sending reminder');
+        }
+    };
+
     React.useEffect(() => {
         const fetchCustomer = async () => {
             try {
@@ -108,16 +182,34 @@ const CustomerDetail = () => {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        // onClick={() => setIsNoteModalOpen(true)}
-                        className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm flex items-center opacity-50 cursor-not-allowed"
-                        disabled
+                        onClick={() => setIsNoteModalOpen(true)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm flex items-center"
                     >
                         <span className="material-symbols-outlined text-sm mr-2">edit_note</span>
-                        Add Note
+                        Edit Notes
                     </button>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center shadow-sm">
+                    <button
+                        onClick={handleSendReminder}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center shadow-sm"
+                    >
                         <span className="material-symbols-outlined text-sm mr-2">send</span>
                         Send Reminder
+                    </button>
+                    <button
+                        onClick={async () => {
+                            if (window.confirm('Are you sure you want to delete this customer? This cannot be undone.')) {
+                                try {
+                                    await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+                                    navigate('/customers');
+                                } catch (e) {
+                                    alert('Failed to delete customer.');
+                                }
+                            }
+                        }}
+                        className="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg font-medium text-sm flex items-center border border-red-200"
+                    >
+                        <span className="material-symbols-outlined text-sm mr-2">delete</span>
+                        Delete
                     </button>
                 </div>
             </div>
@@ -168,8 +260,37 @@ const CustomerDetail = () => {
                         <p className="font-medium">{customer.cocNumber || '-'}</p>
                     </div>
                     <div>
-                        <p className="text-slate-500 text-xs">Credit Limit</p>
-                        <p className="font-medium text-emerald-600">€{customer.creditLimit?.toLocaleString()}</p>
+                        <p className="text-slate-500 text-xs mb-1">Credit Limit</p>
+                        {isEditingLimit ? (
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="number"
+                                    className="w-24 px-2 py-1 text-sm border rounded"
+                                    value={creditLimitInput}
+                                    onChange={(e) => setCreditLimitInput(e.target.value)}
+                                    autoFocus
+                                />
+                                <button onClick={handleSaveCreditLimit} className="text-green-600 hover:text-green-800">
+                                    <span className="material-symbols-outlined text-sm">check</span>
+                                </button>
+                                <button onClick={() => setIsEditingLimit(false)} className="text-red-600 hover:text-red-800">
+                                    <span className="material-symbols-outlined text-sm">close</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 group">
+                                <p className="font-medium text-emerald-600">€{customer.creditLimit?.toLocaleString()}</p>
+                                <button
+                                    onClick={() => {
+                                        setCreditLimitInput(customer.creditLimit?.toString() || '0');
+                                        setIsEditingLimit(true);
+                                    }}
+                                    className="text-slate-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                    <span className="material-symbols-outlined text-xs">edit</span>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -195,11 +316,11 @@ const CustomerDetail = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {customer.invoices.map(inv => (
+                        {customer.invoices.map((inv: any) => (
                             <tr key={inv.id} className="hover:bg-slate-50 transition-colors">
                                 <td className="px-6 py-4 font-medium text-slate-900">#{inv.invoiceNumber}</td>
-                                <td className="px-6 py-4 text-slate-600 text-sm">{inv.issueDate}</td>
-                                <td className="px-6 py-4 text-slate-600 text-sm">{inv.dueDate}</td>
+                                <td className="px-6 py-4 text-slate-600 text-sm">{inv.issueDate ? new Date(inv.issueDate).toLocaleDateString() : '-'}</td>
+                                <td className="px-6 py-4 text-slate-600 text-sm">{inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : '-'}</td>
                                 <td className="px-6 py-4">
                                     {inv.daysOverdue > 0 ? (
                                         <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded border border-red-200">
@@ -234,9 +355,17 @@ const CustomerDetail = () => {
                 invoiceNumber={selectedInvoice || ''}
             />
 
+            {/* Note Modal */}
+            <NoteModal
+                isOpen={isNoteModalOpen}
+                onClose={() => setIsNoteModalOpen(false)}
+                customerName={customer.companyName}
+                initialNote={customer.notes || ''}
+                onSave={handleSaveNote}
+            />
+
         </div >
     );
 }
 
 export default CustomerDetail;
-

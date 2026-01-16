@@ -9,6 +9,7 @@ import { CustomerController } from './controllers/CustomerController';
 import { DictionaryController } from './controllers/DictionaryController';
 import { AccountViewService } from './services/AccountViewService';
 import { TwilioService } from './services/TwilioService';
+import { Customer } from './entities/Customer.entity';
 
 // Fix __dirname for ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -102,8 +103,47 @@ app.get('/oauth/callback', async (req, res) => {
 // WhatsApp Reminders
 app.post('/api/reminders/send', async (req, res) => {
   try {
-    const { phoneNumber, customerName, invoiceNum, amount, paymentLink, templateId } = req.body;
+    const { customerId, phoneNumber, customerName, invoiceNum, amount, paymentLink, templateId } = req.body;
 
+    // SCENARIO 1: Automated Summary Reminder via Frontend "Send Reminder" button
+    if (customerId) {
+      const customerRepo = AppDataSource.getRepository(Customer);
+      const customer = await customerRepo.findOne({
+        where: { id: customerId },
+        relations: ['invoices']
+      });
+
+      if (!customer) {
+        return res.status(404).json({ error: 'Customer not found' });
+      }
+
+      if (!customer.whatsappPhone) {
+        return res.status(400).json({ error: 'Customer has no WhatsApp number linked.' });
+      }
+
+      const overdueInvoices = customer.invoices.filter(inv => inv.status === 'OVERDUE' || (inv.daysOverdue > 0 && inv.openAmount > 0));
+      const count = overdueInvoices.length;
+      const totalAmount = overdueInvoices.reduce((sum, inv) => sum + inv.openAmount, 0);
+
+      if (count === 0) {
+        return res.status(400).json({ error: 'No overdue invoices to remind about.' });
+      }
+
+      // Mock Link
+      const link = `https://portal.roza-flowers.com/pay/${customer.accountViewId}`;
+
+      const result = await twilioService.sendOverdueSummary(
+        customer.whatsappPhone,
+        customer.companyName,
+        count,
+        totalAmount,
+        link
+      );
+
+      return res.json({ success: true, result });
+    }
+
+    // SCENARIO 2: Legacy/Manual Single Invoice Reminder (if still used)
     if (!phoneNumber) {
       return res.status(400).json({ error: 'Phone number is required' });
     }
@@ -144,6 +184,8 @@ app.post('/api/reminders/send', async (req, res) => {
 app.get('/api/customers', (req, res) => customerController.getAll(req, res));
 app.post('/api/customers', (req, res) => customerController.create(req, res));
 app.get('/api/customers/:id', (req, res) => customerController.getOne(req, res));
+app.patch('/api/customers/:id', (req, res) => customerController.update(req, res));
+app.delete('/api/customers/:id', (req, res) => customerController.delete(req, res));
 
 // Operations
 app.post('/api/sync', (req, res) => customerController.triggerSync(req, res));
