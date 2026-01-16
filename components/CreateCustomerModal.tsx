@@ -11,6 +11,16 @@ export const CreateCustomerModal: React.FC<CreateCustomerModalProps> = ({ isOpen
     const [formData, setFormData] = useState({
         companyName: '',
         email: '',
+        whatsappPhone: '',
+        website: '',
+        street: '',
+        houseNumber: '',
+        zipCode: '',
+        city: '',
+        country: 'NL',
+        iban: '',
+        vatNumber: '',
+        cocNumber: '',
         creditLimit: 5000,
         maxPaymentDays: 30
     });
@@ -56,26 +66,90 @@ export const CreateCustomerModal: React.FC<CreateCustomerModalProps> = ({ isOpen
                                 </h3>
                                 {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
                                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Company Name</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                                            value={formData.companyName}
-                                            onChange={e => setFormData({ ...formData, companyName: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
-                                        <input
-                                            type="email"
-                                            className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                                            value={formData.email}
-                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Contact Section */}
+                                        <div className="col-span-1 md:col-span-2">
+                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-2 border-b border-slate-200 pb-1">Contact Details</h4>
+                                        </div>
+
+                                        <div className="col-span-1 md:col-span-2">
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Company Name</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                                                value={formData.companyName}
+                                                onChange={e => setFormData({ ...formData, companyName: e.target.value })}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
+                                            <input
+                                                type="email"
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                                                value={formData.email}
+                                                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">WhatsApp / Phone</label>
+                                            <input
+                                                type="text"
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                                                value={formData.whatsappPhone}
+                                                onChange={e => setFormData({ ...formData, whatsappPhone: e.target.value })}
+                                            />
+                                        </div>
+
+                                        {/* Address Section */}
+                                        <div className="col-span-1 md:col-span-2 mt-2">
+                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-2 border-b border-slate-200 pb-1">Address</h4>
+                                        </div>
+
+                                        <div className="col-span-1 md:col-span-1">
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Street</label>
+                                            <input type="text" value={formData.street} onChange={e => setFormData({ ...formData, street: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+                                        <div className="col-span-1 md:col-span-1">
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">House Nr.</label>
+                                            <input type="text" value={formData.houseNumber} onChange={e => setFormData({ ...formData, houseNumber: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Zip Code</label>
+                                            <input type="text" value={formData.zipCode} onChange={e => setFormData({ ...formData, zipCode: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">City</label>
+                                            <input type="text" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+
+                                        {/* Financial Section */}
+                                        <div className="col-span-1 md:col-span-2 mt-2">
+                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-2 border-b border-slate-200 pb-1">Financial & Legal</h4>
+                                        </div>
+
+                                        <div className="col-span-1 md:col-span-2">
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">IBAN</label>
+                                            <input type="text" value={formData.iban} onChange={e => setFormData({ ...formData, iban: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">VAT Number</label>
+                                            <input type="text" value={formData.vatNumber} onChange={e => setFormData({ ...formData, vatNumber: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">CoC (KvK)</label>
+                                            <input type="text" value={formData.cocNumber} onChange={e => setFormData({ ...formData, cocNumber: e.target.value })}
+                                                className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-md shadow-sm py-2 px-3 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
+                                        </div>
+
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Credit Limit</label>
                                             <input

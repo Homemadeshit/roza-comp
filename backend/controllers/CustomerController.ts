@@ -62,7 +62,12 @@ export class CustomerController {
   // POST /api/customers
   async create(req: any, res: any) {
     try {
-      const { companyName, email, creditLimit, maxPaymentDays } = req.body;
+      const {
+        companyName, email, whatsappPhone, website,
+        creditLimit, maxPaymentDays,
+        street, houseNumber, zipCode, city, country,
+        iban, vatNumber, cocNumber
+      } = req.body;
 
       if (!companyName) {
         return res.status(400).json({ error: 'Company Name is required' });
@@ -71,6 +76,19 @@ export class CustomerController {
       const customer = new Customer();
       customer.companyName = companyName;
       customer.email = email || '';
+      customer.whatsappPhone = whatsappPhone || '';
+      customer.website = website || '';
+
+      customer.street = street || '';
+      customer.houseNumber = houseNumber || '';
+      customer.zipCode = zipCode || '';
+      customer.city = city || '';
+      customer.country = country || 'NL';
+
+      customer.iban = iban || '';
+      customer.vatNumber = vatNumber || '';
+      customer.cocNumber = cocNumber || '';
+
       customer.creditLimit = creditLimit || 0;
       customer.maxPaymentDays = maxPaymentDays || 30;
       // Generate a temporary ID or handle this differently if syncing with AV immediately

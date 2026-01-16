@@ -23,6 +23,37 @@ export class Customer {
   @Column({ type: 'varchar', nullable: true })
   whatsappPhone: string; // For WhatsApp Integration
 
+  @Column({ type: 'varchar', nullable: true })
+  website: string;
+
+  // --- Address ---
+
+  @Column({ type: 'varchar', nullable: true })
+  street: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  houseNumber: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  zipCode: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  city: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  country: string;
+
+  // --- Financial Identities ---
+
+  @Column({ type: 'varchar', nullable: true })
+  iban: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  vatNumber: string; // BTW-nummer
+
+  @Column({ type: 'varchar', nullable: true })
+  cocNumber: string; // KvK-nummer
+
   // --- Financial Rules ---
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
