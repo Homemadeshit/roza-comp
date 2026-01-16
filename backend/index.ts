@@ -142,6 +142,7 @@ app.post('/api/reminders/send', async (req, res) => {
 
 // Customers
 app.get('/api/customers', (req, res) => customerController.getAll(req, res));
+app.post('/api/customers', (req, res) => customerController.create(req, res));
 app.get('/api/customers/:id', (req, res) => customerController.getOne(req, res));
 
 // Operations

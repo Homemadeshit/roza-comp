@@ -58,4 +58,30 @@ export class CustomerController {
       return res.status(500).json({ error: 'Sync failed', details: error.message });
     }
   }
+
+  // POST /api/customers
+  async create(req: any, res: any) {
+    try {
+      const { companyName, email, creditLimit, maxPaymentDays } = req.body;
+
+      if (!companyName) {
+        return res.status(400).json({ error: 'Company Name is required' });
+      }
+
+      const customer = new Customer();
+      customer.companyName = companyName;
+      customer.email = email || '';
+      customer.creditLimit = creditLimit || 0;
+      customer.maxPaymentDays = maxPaymentDays || 30;
+      // Generate a temporary ID or handle this differently if syncing with AV immediately
+      customer.accountViewId = `LOC-${Date.now()}`;
+
+      await this.customerRepo.save(customer);
+
+      return res.status(201).json(customer);
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      return res.status(500).json({ error: 'Failed to create customer' });
+    }
+  }
 }
