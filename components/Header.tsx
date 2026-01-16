@@ -16,9 +16,7 @@ const Header = () => {
           <span className="font-bold text-slate-900 dark:text-white text-sm">PP Flowers</span>
         </div>
 
-        <h2 className="text-lg font-semibold text-slate-800 dark:text-white tracking-tight hidden lg:block">
-          Overview
-        </h2>
+
       </div>
       <div className="flex items-center gap-3 md:gap-4">
 
@@ -29,19 +27,12 @@ const Header = () => {
         >
           <span className="material-symbols-outlined text-[22px]">notifications</span>
           {highRiskCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full border border-white dark:border-slate-900 shadow-sm animate-pulse">
+            <span className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 h-5 w-5 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full ring-2 ring-white dark:ring-slate-900 shadow-md">
               {highRiskCount}
             </span>
           )}
         </button>
-        <button className="relative p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-          <span className="material-symbols-outlined text-[22px]">chat_bubble</span>
-        </button>
-        <div className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-blue-500 transition-all">
-          <div className="h-full w-full flex items-center justify-center text-slate-500 dark:text-slate-300">
-            <span className="material-symbols-outlined text-[20px]">person</span>
-          </div>
-        </div>
+
       </div>
     </header>
   );
