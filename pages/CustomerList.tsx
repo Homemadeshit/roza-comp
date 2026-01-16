@@ -45,6 +45,7 @@ const CustomerList = () => {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'All' | 'Overdue' | 'At Risk' | 'Disputed'>('All');
 
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -80,10 +81,14 @@ const CustomerList = () => {
     }, []);
 
     // Filter logic
-    const filteredCustomers = customers.filter(c =>
-        c.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.accountViewId.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredCustomers = customers.filter(c => {
+        const matchesSearch = c.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            c.accountViewId.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesStatus = statusFilter === 'All' || c.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+    });
 
     return (
         <div className="max-w-[1200px] mx-auto pb-10">
@@ -127,13 +132,26 @@ const CustomerList = () => {
                 </div>
                 <div className="flex gap-2 flex-wrap items-center">
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mr-1">Status:</span>
-                    <button className="inline-flex h-8 items-center justify-center rounded-full bg-slate-900 dark:bg-slate-100 px-3 transition-colors">
-                        <span className="text-white dark:text-slate-900 text-xs font-medium">All</span>
+                    <button
+                        onClick={() => setStatusFilter('All')}
+                        className={`inline-flex h-8 items-center justify-center rounded-full px-3 transition-colors ${statusFilter === 'All'
+                                ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+                                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                            }`}
+                    >
+                        <span className="text-xs font-medium">All</span>
                     </button>
                     {['Overdue', 'At Risk', 'Disputed'].map(status => (
-                        <button key={status} className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 px-3 transition-colors">
+                        <button
+                            key={status}
+                            onClick={() => setStatusFilter(status as any)}
+                            className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-3 transition-colors border ${statusFilter === status
+                                    ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
+                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                }`}
+                        >
                             <span className={`h-1.5 w-1.5 rounded-full ${status === 'Overdue' ? 'bg-red-500' : status === 'At Risk' ? 'bg-amber-500' : 'bg-blue-500'}`}></span>
-                            <span className="text-slate-600 dark:text-slate-300 text-xs font-medium">{status}</span>
+                            <span className="text-xs font-medium">{status}</span>
                         </button>
                     ))}
                 </div>

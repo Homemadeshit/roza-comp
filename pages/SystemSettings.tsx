@@ -6,6 +6,8 @@ const SystemSettings = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  const [showToast, setShowToast] = useState(false);
+
   // Settings State (Mock Persistence)
   const [defaultCreditLimit, setDefaultCreditLimit] = useState(() => {
     return localStorage.getItem('defaultCreditLimit') || '5000.00';
@@ -13,7 +15,8 @@ const SystemSettings = () => {
 
   const handleSaveConfiguration = () => {
     localStorage.setItem('defaultCreditLimit', defaultCreditLimit);
-    alert('Configuration saved successfully!');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleSync = async () => {
@@ -33,7 +36,7 @@ const SystemSettings = () => {
   };
 
   return (
-    <div className="max-w-[1000px] mx-auto pb-20">
+    <div className="max-w-[1000px] mx-auto pb-20 relative">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div className="flex min-w-72 flex-col gap-2">
           <h1 className="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">System Settings</h1>
@@ -339,6 +342,13 @@ Payment Link: {{payment_link}}`}
         <span className="material-symbols-outlined text-[18px] mt-0.5 shrink-0">info</span>
         <p>Changes made here affect the global system configuration immediately upon saving. Customer-specific overrides will take precedence over these defaults.</p>
       </div>
+
+      {showToast && (
+        <div className="fixed bottom-6 right-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 z-50">
+          <span className="material-symbols-outlined text-green-400 dark:text-green-600">check_circle</span>
+          <span className="font-medium text-sm">Configuration saved successfully!</span>
+        </div>
+      )}
     </div>
   );
 };
