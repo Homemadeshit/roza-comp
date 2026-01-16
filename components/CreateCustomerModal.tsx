@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../utils/api';
 
 interface CreateCustomerModalProps {
     isOpen: boolean;
@@ -25,18 +26,13 @@ export const CreateCustomerModal: React.FC<CreateCustomerModalProps> = ({ isOpen
         setError(null);
 
         try {
-            const response = await fetch('/api/customers', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) throw new Error('Failed to create customer');
+            // Use 'api' instance to ensure interceptor (mock or auth) is used
+            await api.post('/customers', formData);
 
             onSuccess();
             onClose();
         } catch (err: any) {
-            setError(err.message);
+            setError(err.response?.data?.error || err.message);
         } finally {
             setLoading(false);
         }

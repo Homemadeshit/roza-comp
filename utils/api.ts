@@ -100,7 +100,23 @@ api.interceptors.response.use(
 
       // 2. Mock Customer List
       if (url?.endsWith('/customers')) {
-        return Promise.resolve({ data: MOCK_CUSTOMERS });
+        // If it's a GET, return list. If POST, return success with mock data.
+        if (error.config.method === 'get') {
+          return Promise.resolve({ data: MOCK_CUSTOMERS });
+        }
+        if (error.config.method === 'post') {
+          const newCustomer = JSON.parse(error.config.data);
+          return Promise.resolve({
+            data: {
+              ...newCustomer,
+              id: 'mock-id-' + Date.now(),
+              accountViewId: 'MOCK-NEW',
+              currentBalance: 0,
+              status: 'Current',
+              initials: newCustomer.companyName.substring(0, 2).toUpperCase()
+            }
+          });
+        }
       }
 
       // 3. Mock Customer Detail (regex for /customers/:id)
