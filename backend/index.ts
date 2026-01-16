@@ -102,19 +102,36 @@ app.get('/oauth/callback', async (req, res) => {
 // WhatsApp Reminders
 app.post('/api/reminders/send', async (req, res) => {
   try {
-    const { phoneNumber, customerName, invoiceNum, amount, paymentLink } = req.body;
+    const { phoneNumber, customerName, invoiceNum, amount, paymentLink, templateId } = req.body;
 
     if (!phoneNumber) {
       return res.status(400).json({ error: 'Phone number is required' });
     }
 
-    const result = await twilioService.sendWhatsAppReminder(
-      phoneNumber,
-      customerName || 'Customer',
-      invoiceNum || 'INV-pending',
-      amount || 0,
-      paymentLink || 'https://roza-payments.com/link/123'
-    );
+    let result;
+
+    if (templateId) {
+      // PROD: Use Approved Template
+      // Map your variables based on how you set up the template in Twilio
+      // Example assumed: {{1}}=Name, {{2}}=InvoiceNum, {{3}}=Amount, {{4}}=Link
+      const variables = {
+        '1': customerName || 'Customer',
+        '2': invoiceNum || 'INV-000',
+        '3': `€${amount || 0}`,
+        '4': paymentLink || 'https://pay.link'
+      };
+
+      result = await twilioService.sendWhatsAppTemplate(phoneNumber, templateId, variables);
+    } else {
+      // DEV/SANDBOX: Use Freeform Text
+      result = await twilioService.sendWhatsAppReminder(
+        phoneNumber,
+        customerName || 'Customer',
+        invoiceNum || 'INV-pending',
+        amount || 0,
+        paymentLink || 'https://roza-payments.com/link/123'
+      );
+    }
 
     return res.json({ success: true, result });
   } catch (error) {

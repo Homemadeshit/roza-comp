@@ -40,4 +40,29 @@ export class TwilioService {
             throw error;
         }
     }
+
+
+    async sendWhatsAppTemplate(to: string, templateSid: string, variables: Record<string, string>) {
+        if (!this.client) {
+            console.log(`[MOCK TWILIO] Sending Template ${templateSid} to ${to} with vars:`, variables);
+            return { sid: 'mock-template-sid-' + Date.now(), status: 'queued (mock)' };
+        }
+
+        try {
+            const formattedTo = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`;
+
+            const message = await this.client.messages.create({
+                contentSid: templateSid,
+                contentVariables: JSON.stringify(variables),
+                from: this.fromNumber,
+                to: formattedTo
+            });
+
+            console.log(`✅ WhatsApp Template sent to ${to}, SID: ${message.sid}`);
+            return message;
+        } catch (error: any) {
+            console.error('❌ Failed to send WhatsApp Template:', error?.message || error);
+            throw error;
+        }
+    }
 }
