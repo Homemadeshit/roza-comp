@@ -46,6 +46,16 @@ export class Invoice {
   @Column({ type: 'boolean', default: false })
   isDisputed: boolean; // If true, this invoice might be excluded from blocking logic
 
+  // --- External Data Mapping (OPENITEM) ---
+  @Column({ type: 'varchar', nullable: true })
+  paymentReference: string; // AG_PAYREF
+
+  @Column({ type: 'boolean', default: false })
+  reminderBlock: boolean; // AREM_BLK
+
+  @Column({ type: 'varchar', nullable: true })
+  reminderStatus: string; // ACREM_STAT
+
   @ManyToOne(() => Customer, (customer) => customer.invoices)
   @JoinColumn({ name: 'customer_id' })
   customer: Customer;
