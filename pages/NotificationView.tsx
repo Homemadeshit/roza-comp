@@ -1,25 +1,81 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
 
 const NotificationView = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Logic: If ID is 'blocked', find the first High Risk customer to demo. 
-  // Otherwise find by ID.
-  const customer = id === 'blocked'
-    ? MOCK_COLLECTIONS_DATA.find(c => c.risk === 'HIGH')
-    : MOCK_COLLECTIONS_DATA.find(c => c.id === id);
+  // 1. Queue Logic: Get all blocked/high-risk candidates
+  const blockedQueue = React.useMemo(() => {
+    if (id === 'blocked') {
+      return MOCK_COLLECTIONS_DATA.filter(c => c.risk === 'HIGH');
+    }
+    // If a specific ID is passed, queue only that one (or finding just that one)
+    const single = MOCK_COLLECTIONS_DATA.find(c => c.id === id);
+    return single ? [single] : [];
+  }, [id]);
+
+  // 2. Navigation State
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isFinished, setIsFinished] = React.useState(false);
+
+  const customer = blockedQueue[currentIndex];
+
+  // Handlers
+  const handleNext = () => {
+    if (currentIndex < blockedQueue.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    } else {
+      setIsFinished(true);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setIsFinished(false); // Go back from finish screen if needed
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+
+  // 3. Completion Screen
+  if (isFinished) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-[1200px] mx-auto animate-in zoom-in duration-300">
+        <div className="h-24 w-24 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 shadow-lg shadow-emerald-500/20">
+          <span className="material-symbols-outlined text-5xl">check_circle</span>
+        </div>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">All Caught Up!</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-lg mb-8">You went through all blocked account reports.</p>
+
+        <div className="flex gap-4">
+          <button
+            onClick={() => { setIsFinished(false); setCurrentIndex(0); }}
+            className="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+          >
+            Review Again
+          </button>
+          <button
+            onClick={() => navigate('/reports')}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm transition-colors"
+          >
+            Back to Reports
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!customer) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-xl font-bold">No blocked customer found.</h2>
+        <h2 className="text-xl font-bold">No blocked customers found.</h2>
         <Link to="/" className="text-blue-500 hover:underline">Return to Dashboard</Link>
       </div>
     );
   }
 
+  const isQueueMode = blockedQueue.length > 1;
   const overdueInvoices = customer.invoices.filter(i => i.daysOverdue > 0);
   const creditUsagePercent = Math.min(Math.round((customer.currentBalance / customer.creditLimit) * 100), 100);
 
@@ -42,18 +98,53 @@ const NotificationView = () => {
               <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Notification: Customer Blocked</h1>
               <span className="px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 text-xs font-bold border border-red-200 dark:border-red-500/30 uppercase tracking-wide">Action Required</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[18px]">schedule</span>
-              <span>Triggered today at 09:42 AM by System Rule #402</span>
-            </div>
+
+            {/* Queue Navigation Status */}
+            {isQueueMode && (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                  Reviewing {currentIndex + 1} of {blockedQueue.length}
+                </span>
+                <div className="h-1 w-24 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${((currentIndex + 1) / blockedQueue.length) * 100}%` }}></div>
+                </div>
+              </div>
+            )}
+
+            {!isQueueMode && (
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                <span className="material-symbols-outlined text-[18px]">schedule</span>
+                <span>Triggered today at 09:42 AM by System Rule #402</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <button className="h-9 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">history</span> Audit Log
-            </button>
-            <button className="h-9 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">snooze</span> Snooze (24h)
-            </button>
+            {isQueueMode ? (
+              <>
+                <button
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  className="h-9 px-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="material-symbols-outlined text-[18px]">arrow_back</span> Prev
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="h-9 px-4 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 border border-transparent text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm"
+                >
+                  Next <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="h-9 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-sm">
+                  <span className="material-symbols-outlined text-[18px]">history</span> Audit Log
+                </button>
+                <button className="h-9 px-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-sm">
+                  <span className="material-symbols-outlined text-[18px]">snooze</span> Snooze (24h)
+                </button>
+              </>
+            )}
           </div>
         </div>
 
