@@ -166,11 +166,7 @@ This document tracks the analysis of AccountView database tables and their relev
 **Integration Target:** **Medium/High Potential**
 
 ### Relevance
-*   **Validation:** Essential for validating customer banking details for **Direct Debit** (Incasso) batches.
-*   **Payment Routing:** Ensures payments are directed to/from the correct accounts.
-
----
-
+*   **Validation**: Essential for validating customer banking details for **Direct Debit** (Incasso) batches.
 *   **Payment Routing**: Ensures payments are directed to/from the correct accounts.
 
 ---
@@ -211,32 +207,19 @@ This document tracks the analysis of AccountView database tables and their relev
 ---
 
 ## 20. ADM_USR / ADM_GRP (Users & Groups)
-
-## 19. L5_DMS... (Scanbooks / Scanboeken)
-
-**Source Tables:** `L5_DMSA`, `L5_DMSB`, `L5_DMSC`, etc.
-**Context:** Metadata for the scanning and recognition module.
-**Integration Target:** **Medium Potential** (Backend for `USR_LINK`)
-
-### Relevance
-*   **Linkage**: Explains the `L5_DMSREF` field found in `L5_CODOI`. It's the system used to recognize incoming purchase invoices, but might also store outgoing sales invoice copies.
-
----
-
-## 20. ADM_USR / ADM_GRP (Users & Groups)
 **Decision:** **Ignored**.
 
 ---
 
-## 17. CHK_DESC / TRN_CHK (Cost Centers)
+## 21. CHK_DESC / TRN_CHK (Cost Centers)
 **Decision:** **Ignored**.
 
 ---
 
-## 18. DEP_HDR / DEP_LINE (Depreciation)
+## 22. DEP_HDR / DEP_LINE (Depreciation)
 **Decision:** **Ignored**.
 
 ---
 
-## 19. AP_ASBL (Assemblies)
+## 23. AP_ASBL (Assemblies)
 **Decision:** **Ignored**.

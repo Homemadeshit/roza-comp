@@ -8,6 +8,7 @@ import { AppDataSource } from './db';
 import { CustomerController } from './controllers/CustomerController';
 import { DictionaryController } from './controllers/DictionaryController';
 import { AccountViewService } from './services/AccountViewService';
+import { TwilioService } from './services/TwilioService';
 
 // Fix __dirname for ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +29,9 @@ app.use((req, res, next) => {
 
 // Initialize Controllers
 const customerController = new CustomerController();
+
 const dictionaryController = new DictionaryController();
+const twilioService = new TwilioService();
 
 // --- API Routes ---
 
@@ -95,6 +98,30 @@ app.get('/oauth/callback', async (req, res) => {
 });
 
 // --- End OAuth Routes ---
+
+// WhatsApp Reminders
+app.post('/api/reminders/send', async (req, res) => {
+  try {
+    const { phoneNumber, customerName, invoiceNum, amount, paymentLink } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+
+    const result = await twilioService.sendWhatsAppReminder(
+      phoneNumber,
+      customerName || 'Customer',
+      invoiceNum || 'INV-pending',
+      amount || 0,
+      paymentLink || 'https://roza-payments.com/link/123'
+    );
+
+    return res.json({ success: true, result });
+  } catch (error) {
+    console.error('Reminder error:', error);
+    return res.status(500).json({ error: 'Failed to send reminder' });
+  }
+});
 
 // Customers
 app.get('/api/customers', (req, res) => customerController.getAll(req, res));
