@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { api } from '../utils/api'; // Use centralized API
 
 const SystemSettings = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'automation' | 'templates' | 'integrations'>('automation');
+  const [activeTab, setActiveTab] = useState<'general' | 'automation' | 'templates' | 'integrations'>('general');
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -54,10 +54,10 @@ const SystemSettings = () => {
       {/* Tabs */}
       <div className="flex items-center gap-1 mb-6 border-b border-slate-200 dark:border-slate-800 overflow-x-auto">
         {[
+          { id: 'general', label: 'General Defaults', icon: 'tune' },
           { id: 'automation', label: 'Automation Rules', icon: 'auto_fix_high' },
           { id: 'templates', label: 'Message Templates', icon: 'mail' },
           { id: 'integrations', label: 'Integrations', icon: 'hub' },
-          { id: 'general', label: 'General Defaults', icon: 'tune' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -241,6 +241,48 @@ Payment Link: {{payment_link}}`}
                         <span className="material-symbols-outlined text-[18px]">sync</span> Sync Now
                       </>
                     )}
+                  </button>
+                </div>
+              </div>
+
+              {/* WhatsApp */}
+              <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-lg bg-[#25D366] text-white flex items-center justify-center shadow-sm">
+                    <span className="material-symbols-outlined text-[26px]">chat</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">WhatsApp Business</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Automated messaging channel • Active</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connected
+                  </div>
+                  <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    Configure
+                  </button>
+                </div>
+              </div>
+
+              {/* Email / Outlook */}
+              <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-lg bg-[#0078D4] text-white flex items-center justify-center shadow-sm">
+                    <span className="material-symbols-outlined text-[26px]">mail</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">Office 365 Mail</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">SMTP Integration • finance@ppflowers.com</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connected
+                  </div>
+                  <button className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    Configure
                   </button>
                 </div>
               </div>
