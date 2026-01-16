@@ -38,11 +38,9 @@ const Header = () => {
           <span className="material-symbols-outlined text-[22px]">chat_bubble</span>
         </button>
         <div className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-blue-500 transition-all">
-          <img
-            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-            alt="Profile"
-            className="h-full w-full object-cover"
-          />
+          <div className="h-full w-full flex items-center justify-center text-slate-500 dark:text-slate-300">
+            <span className="material-symbols-outlined text-[20px]">person</span>
+          </div>
         </div>
       </div>
     </header>
