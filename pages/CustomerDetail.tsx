@@ -7,33 +7,47 @@ import NoteModal from '../components/NoteModal';
 const CustomerDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [customer, setCustomer] = React.useState<any | null>(null);
+    const [loading, setLoading] = React.useState(true);
+
+    // Invoices State
     const [selectedInvoice, setSelectedInvoice] = React.useState<string | null>(null);
-    const [isEditingCredit, setIsEditingCredit] = React.useState(false);
 
-    // Find customer. Note: In a real app, this would come from an API.
-    // We use a mutable reference here for the demo to show immediate updates.
-    const customer = MOCK_COLLECTIONS_DATA.find(c => c.id === id);
-    const [currentCreditLimit, setCurrentCreditLimit] = React.useState(customer?.creditLimit || 0);
+    React.useEffect(() => {
+        const fetchCustomer = async () => {
+            try {
+                // Assuming we have an API endpoint to fetch single customer
+                // If not, we might need to add it or filter from list (less ideal)
+                const response = await fetch(`/api/customers/${id}`);
+                const data = await response.json();
 
-    // Notes State
-    const [isNoteModalOpen, setIsNoteModalOpen] = React.useState(false);
-    const [customerNotes, setCustomerNotes] = React.useState(customer?.notes || '');
+                // Transform data if needed or use as is
+                setCustomer(data);
+            } catch (error) {
+                console.error("Failed to load customer", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const handleSaveCreditLimit = (newLimit: number) => {
-        if (customer) {
-            customer.creditLimit = newLimit; // Update mock ref
-            setCurrentCreditLimit(newLimit);
-            setIsEditingCredit(false);
-        }
-    };
+        if (id) fetchCustomer();
+    }, [id]);
 
-    const handleSaveNote = (newNote: string) => {
-        if (customer) {
-            customer.notes = newNote; // Update mock ref
-            setCustomerNotes(newNote); // Update local state
-            setIsNoteModalOpen(false);
-        }
-    };
+    if (loading) return <div className="p-10 text-center">Loading Profile...</div>;
+
+    if (!customer) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[50vh]">
+                <h2 className="text-xl font-bold text-gray-800">Customer not found</h2>
+                <button
+                    onClick={() => navigate('/customers')}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Back to Directory
+                </button>
+            </div>
+        );
+    }
 
     if (!customer) {
         return (
@@ -94,11 +108,12 @@ const CustomerDetail = () => {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        onClick={() => setIsNoteModalOpen(true)}
-                        className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm flex items-center"
+                        // onClick={() => setIsNoteModalOpen(true)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-sm flex items-center opacity-50 cursor-not-allowed"
+                        disabled
                     >
                         <span className="material-symbols-outlined text-sm mr-2">edit_note</span>
-                        {customerNotes ? 'Edit Note' : 'Add Note'}
+                        Add Note
                     </button>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center shadow-sm">
                         <span className="material-symbols-outlined text-sm mr-2">send</span>
@@ -107,70 +122,59 @@ const CustomerDetail = () => {
                 </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Outstanding Balance</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">€{customer.currentBalance.toLocaleString()}</p>
-                </div>
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overdue Amount</p>
-                    <p className="text-2xl font-bold text-red-600 mt-1">€{totalOverdue.toLocaleString()}</p>
-                </div>
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <div className="flex justify-between items-center mb-2">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Credit Limit</p>
-                        <button
-                            onClick={() => setIsEditingCredit(!isEditingCredit)}
-                            className="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors uppercase tracking-wide border border-blue-100"
-                        >
-                            <span className="material-symbols-outlined text-[14px]">edit</span>
-                            Edit
-                        </button>
+            {/* Contact Card */}
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Contact Information</h3>
+                <div className="space-y-2 text-sm">
+                    <div className="flex justify-between border-b border-slate-50 pb-1">
+                        <span className="text-slate-500">Email</span>
+                        <span className="font-medium text-slate-900 dark:text-white">{customer.email || '-'}</span>
                     </div>
-
-                    {isEditingCredit ? (
-                        <div className="mt-1 flex items-center gap-2">
-                            <input
-                                type="number"
-                                autoFocus
-                                className="w-full border rounded px-2 py-1 text-lg font-bold"
-                                defaultValue={currentCreditLimit}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleSaveCreditLimit(Number(e.currentTarget.value));
-                                }}
-                                onBlur={(e) => handleSaveCreditLimit(Number(e.target.value))}
-                            />
-                        </div>
-                    ) : (
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">€{currentCreditLimit.toLocaleString()}</p>
-                    )}
-
-                    <div className="w-full bg-slate-100 h-1.5 mt-2 rounded-full overflow-hidden">
-                        <div
-                            className={`h-full rounded-full ${customer.currentBalance > currentCreditLimit ? 'bg-red-500' : 'bg-blue-500'}`}
-                            style={{ width: `${Math.min((customer.currentBalance / currentCreditLimit) * 100, 100)}%` }}
-                        ></div>
+                    <div className="flex justify-between border-b border-slate-50 pb-1">
+                        <span className="text-slate-500">Phone/WA</span>
+                        <span className="font-medium text-slate-900 dark:text-white">{customer.whatsappPhone || '-'}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-50 pb-1">
+                        <span className="text-slate-500">Website</span>
+                        <a href={customer.website} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:underline">{customer.website || '-'}</a>
                     </div>
                 </div>
-                <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Customer Since</p>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{oldestInvoiceDate || 'N/A'}</p>
-                </div>
-
-                {/* Notes Section */}
-                {customerNotes && (
-                    <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-xl p-6 shadow-sm flex gap-4">
-                        <div className="flex-shrink-0">
-                            <span className="material-symbols-outlined text-amber-500">sticky_note_2</span>
-                        </div>
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide mb-1">Internal Note</h3>
-                            <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{customerNotes}</p>
-                        </div>
-                    </div>
-                )}
             </div>
+
+            {/* Address Card */}
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Address</h3>
+                <div className="space-y-1 text-sm text-slate-900 dark:text-white">
+                    <p>{customer.street} {customer.houseNumber}</p>
+                    <p>{customer.zipCode} {customer.city}</p>
+                    <p className="font-semibold">{customer.country}</p>
+                </div>
+            </div>
+
+            {/* Financial Card */}
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm col-span-1 md:col-span-2">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Financial Details</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p className="text-slate-500 text-xs">IBAN</p>
+                        <p className="font-mono font-medium">{customer.iban || 'Not set'}</p>
+                    </div>
+                    <div>
+                        <p className="text-slate-500 text-xs">VAT Number</p>
+                        <p className="font-medium">{customer.vatNumber || '-'}</p>
+                    </div>
+                    <div>
+                        <p className="text-slate-500 text-xs">CoC Number</p>
+                        <p className="font-medium">{customer.cocNumber || '-'}</p>
+                    </div>
+                    <div>
+                        <p className="text-slate-500 text-xs">Credit Limit</p>
+                        <p className="font-medium text-emerald-600">€{customer.creditLimit?.toLocaleString()}</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Invoices List */}
 
             {/* Invoices List */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
@@ -230,15 +234,7 @@ const CustomerDetail = () => {
                 invoiceNumber={selectedInvoice || ''}
             />
 
-            <NoteModal
-                isOpen={isNoteModalOpen}
-                onClose={() => setIsNoteModalOpen(false)}
-                customerName={customer.companyName}
-                initialNote={customerNotes}
-                onSave={handleSaveNote}
-            />
-
-        </div>
+        </div >
     );
 }
 
