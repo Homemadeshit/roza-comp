@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { api } from '../utils/api'; // Use centralized API
 import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
+import { CreateCustomerModal } from '../components/CreateCustomerModal';
 
 interface Customer {
     id: string;
@@ -46,37 +47,38 @@ const CustomerList = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<'All' | 'Overdue' | 'At Risk' | 'Disputed'>('All');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const fetchCustomers = async () => {
+        // --- DEMO MODE: Use MOCK_COLLECTIONS_DATA for consistency ---
+        const mappedData: Customer[] = MOCK_COLLECTIONS_DATA.map((c: any) => {
+            let status: Customer['status'] = 'Current';
+            // Map mock risk/balance to status
+            const hasOverdue = c.invoices.some((i: any) => i.daysOverdue > 0);
+
+            if (hasOverdue) status = 'Overdue';
+            else if (c.risk === 'HIGH') status = 'At Risk';
+            else if (!c.directDebit && c.currentBalance > 0) status = 'Disputed'; // Proxy for "Manual Action Needed"
+
+            return {
+                id: c.id,
+                companyName: c.companyName,
+                accountViewId: c.accountViewId,
+                email: c.email,
+                creditLimit: c.creditLimit,
+                currentBalance: c.currentBalance,
+                maxPaymentDays: c.maxPaymentDays,
+                isBlockedLocally: false, // Default
+                status: status,
+                initials: c.companyName.substring(0, 2).toUpperCase()
+            };
+        });
+
+        setCustomers(mappedData);
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const fetchCustomers = async () => {
-            // --- DEMO MODE: Use MOCK_COLLECTIONS_DATA for consistency ---
-            const mappedData: Customer[] = MOCK_COLLECTIONS_DATA.map((c: any) => {
-                let status: Customer['status'] = 'Current';
-                // Map mock risk/balance to status
-                const hasOverdue = c.invoices.some((i: any) => i.daysOverdue > 0);
-
-                if (hasOverdue) status = 'Overdue';
-                else if (c.risk === 'HIGH') status = 'At Risk';
-                else if (!c.directDebit && c.currentBalance > 0) status = 'Disputed'; // Proxy for "Manual Action Needed"
-
-                return {
-                    id: c.id,
-                    companyName: c.companyName,
-                    accountViewId: c.accountViewId,
-                    email: c.email,
-                    creditLimit: c.creditLimit,
-                    currentBalance: c.currentBalance,
-                    maxPaymentDays: c.maxPaymentDays,
-                    isBlockedLocally: false, // Default
-                    status: status,
-                    initials: c.companyName.substring(0, 2).toUpperCase()
-                };
-            });
-
-            setCustomers(mappedData);
-            setLoading(false);
-        };
-
         fetchCustomers();
     }, []);
 
@@ -110,7 +112,9 @@ const CustomerList = () => {
                     <button className="flex items-center justify-center gap-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 h-9 px-4 text-sm font-medium shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
                         <span className="material-symbols-outlined text-[18px]">download</span> Export
                     </button>
-                    <button className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white h-9 px-4 text-sm font-medium shadow-sm hover:bg-blue-500 transition-colors">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white h-9 px-4 text-sm font-medium shadow-sm hover:bg-blue-500 transition-colors">
                         <span className="material-symbols-outlined text-[18px]">add</span> Add Customer
                     </button>
                 </div>
@@ -229,8 +233,17 @@ const CustomerList = () => {
                     </div>
                 </div>
             </div>
+            <CreateCustomerModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={() => {
+                    fetchCustomers();
+                }}
+            />
         </div>
     );
 };
+
+
 
 export default CustomerList;
