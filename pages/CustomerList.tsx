@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { api } from '../utils/api'; // Use centralized API
-import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
+import { api } from '../utils/api';
+// import { MOCK_COLLECTIONS_DATA } from '../utils/mockCollectionsData';
 import { CreateCustomerModal } from '../components/CreateCustomerModal';
 
 interface Customer {
@@ -50,32 +50,40 @@ const CustomerList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fetchCustomers = async () => {
-        // --- DEMO MODE: Use MOCK_COLLECTIONS_DATA for consistency ---
-        const mappedData: Customer[] = MOCK_COLLECTIONS_DATA.map((c: any) => {
-            let status: Customer['status'] = 'Current';
-            // Map mock risk/balance to status
-            const hasOverdue = c.invoices.some((i: any) => i.daysOverdue > 0);
+        try {
+            setLoading(true);
+            const response = await api.get('/customers');
 
-            if (hasOverdue) status = 'Overdue';
-            else if (c.risk === 'HIGH') status = 'At Risk';
-            else if (!c.directDebit && c.currentBalance > 0) status = 'Disputed'; // Proxy for "Manual Action Needed"
+            const mappedData: Customer[] = response.data.map((c: any) => {
+                let status: Customer['status'] = 'Current';
 
-            return {
-                id: c.id,
-                companyName: c.companyName,
-                accountViewId: c.accountViewId,
-                email: c.email,
-                creditLimit: c.creditLimit,
-                currentBalance: c.currentBalance,
-                maxPaymentDays: c.maxPaymentDays,
-                isBlockedLocally: false, // Default
-                status: status,
-                initials: c.companyName.substring(0, 2).toUpperCase()
-            };
-        });
+                // If invoices are loaded, check them. Otherwise rely on balance.
+                const hasOverdue = c.invoices?.some((i: any) => i.status === 'OVERDUE' || (new Date(i.dueDate) < new Date() && i.openAmount > 0));
 
-        setCustomers(mappedData);
-        setLoading(false);
+                if (hasOverdue) status = 'Overdue';
+                else if (c.currentBalance > c.creditLimit) status = 'At Risk';
+                else if (c.currentBalance < 0) status = 'Disputed';
+
+                return {
+                    id: c.id,
+                    companyName: c.companyName,
+                    accountViewId: c.accountViewId || 'N/A',
+                    email: c.email || '',
+                    creditLimit: c.creditLimit || 0,
+                    currentBalance: c.currentBalance || 0,
+                    maxPaymentDays: c.maxPaymentDays || 30,
+                    isBlockedLocally: false,
+                    status: status,
+                    initials: c.companyName.substring(0, 2).toUpperCase()
+                };
+            });
+
+            setCustomers(mappedData);
+        } catch (error) {
+            console.error("Failed to fetch customers:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
