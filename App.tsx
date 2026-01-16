@@ -16,10 +16,10 @@ import { api } from './utils/api'; // Use centralized API
 import CollectionsDashboard from './pages/CollectionsDashboard';
 import Reports from './pages/Reports';
 
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const Layout: React.FC<{ children: React.ReactNode; onLogout: () => void }> = ({ children, onLogout }) => {
   return (
     <div className="flex h-screen w-full bg-[#E8E8E8] dark:bg-slate-950">
-      <Sidebar />
+      <Sidebar onLogout={onLogout} />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Header />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-24 relative">
@@ -49,7 +49,9 @@ const AppRoutes = () => {
 };
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
@@ -61,6 +63,7 @@ export default function App() {
         setIsLoading(true);
         // Simulate loading heavy app data
         setTimeout(() => {
+          localStorage.setItem('isAuthenticated', 'true');
           setIsAuthenticated(true);
           setIsLoading(false);
         }, 1500);
@@ -84,6 +87,11 @@ export default function App() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    setIsAuthenticated(false);
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -94,7 +102,7 @@ export default function App() {
 
   return (
     <HashRouter>
-      <Layout>
+      <Layout onLogout={handleLogout}>
         <AppRoutes />
       </Layout>
     </HashRouter>
