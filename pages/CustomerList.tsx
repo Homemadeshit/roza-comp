@@ -120,12 +120,12 @@ const CustomerList = () => {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6">
                 <div className="w-full lg:max-w-md relative group">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="material-symbols-outlined text-slate-400 text-[20px] group-focus-within:text-blue-500 transition-colors">search</span>
+                        <span className="material-symbols-outlined text-slate-400 text-[20px] group-focus-within:text-emerald-500 transition-colors">search</span>
                     </div>
                     <input
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm h-10 shadow-sm transition-all"
+                        className="block w-full pl-10 pr-3 py-2 border border-[#E8E8E8] dark:border-slate-800 rounded-full leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 sm:text-sm h-10 shadow-sm transition-all"
                         placeholder="Search by name, ID, or invoice..."
                         type="text"
                     />
@@ -135,8 +135,8 @@ const CustomerList = () => {
                     <button
                         onClick={() => setStatusFilter('All')}
                         className={`inline-flex h-8 items-center justify-center rounded-full px-3 transition-colors ${statusFilter === 'All'
-                                ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
-                                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                            ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+                            : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                             }`}
                     >
                         <span className="text-xs font-medium">All</span>
@@ -146,8 +146,8 @@ const CustomerList = () => {
                             key={status}
                             onClick={() => setStatusFilter(status as any)}
                             className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-3 transition-colors border ${statusFilter === status
-                                    ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
-                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
+                                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                                 }`}
                         >
                             <span className={`h-1.5 w-1.5 rounded-full ${status === 'Overdue' ? 'bg-red-500' : status === 'At Risk' ? 'bg-amber-500' : 'bg-blue-500'}`}></span>

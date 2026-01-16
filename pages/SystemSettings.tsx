@@ -36,7 +36,7 @@ const SystemSettings = () => {
   };
 
   return (
-    <div className="max-w-[1000px] mx-auto pb-20 relative">
+    <div className="max-w-[1200px] mx-auto pb-20 relative">
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div className="flex min-w-72 flex-col gap-2">
           <h1 className="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">System Settings</h1>

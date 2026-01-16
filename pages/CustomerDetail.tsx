@@ -57,7 +57,7 @@ const CustomerDetail = () => {
     const isReminderBlocked = false;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500">
+        <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in duration-500">
 
             {/* Top Navigation */}
             <button
